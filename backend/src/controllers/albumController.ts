@@ -153,7 +153,7 @@ export const toggleShareAlbum = asyncHandler(
 // Get public album by share token (no auth required)
 export const getPublicAlbum = asyncHandler(
   async (req: Request, res: Response) => {
-    const { token } = req.params;
+    const token = req.params.token as string;
     const sort = req.query.sort === "asc" ? "asc" : "desc";
 
     const album = await prisma.album.findFirst({
