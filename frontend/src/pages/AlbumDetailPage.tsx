@@ -4,52 +4,54 @@ import {
   Edit3,
   ImagePlus,
   Trash2,
-  Wand2,
+  Image,
+  FolderOpen,
+  Share2,
+  Check,
+  Copy,
 } from "lucide-react";
 import {
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
-import { Album, Photo, ViewMode } from "../types";
+import { Album, Photo, ViewMode, SortOrder } from "../types";
 import {
   deleteAlbum,
   deletePhoto,
   fetchAlbum,
   updateAlbum,
   uploadPhotos,
+  toggleShareAlbum,
 } from "../services/albums";
-import { Button } from "../components/ui/Button";
 import { ViewToggle } from "../components/ViewToggle";
 import { PhotoGrid } from "../components/photos/PhotoGrid";
 import { PhotoTable } from "../components/photos/PhotoTable";
 import { Modal } from "../components/ui/Modal";
 import { PhotoPreview } from "../components/photos/PhotoPreview";
-import {
-  AlbumForm,
-  AlbumFormValues,
-} from "../components/albums/AlbumForm";
+import { AlbumForm, AlbumFormValues } from "../components/albums/AlbumForm";
 import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/Textarea";
+import { DropZone } from "../components/ui/DropZone";
+import { SortSelect } from "../components/ui/SortSelect";
+import { Pagination } from "../components/ui/Pagination";
+import { converterCor } from "../utils/cores";
+import StarBorder from "../components/ui/StarBorder";
 
 const uploadSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   acquisitionDate: z.string().optional(),
   predominantColor: z.string().optional(),
-  files: z
-    .any()
-    .refine(
-      (files) => files instanceof FileList && files.length > 0,
-      "Envie ao menos um arquivo",
-    ),
 });
 
 type UploadValues = z.infer<typeof uploadSchema>;
+
+const ITEMS_PER_PAGE = 12;
 
 export function AlbumDetailPage() {
   const params = useParams();
@@ -57,17 +59,22 @@ export function AlbumDetailPage() {
   const albumId = Number(params.id);
   const queryClient = useQueryClient();
   const [view, setView] = useState<ViewMode>("grid");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [showUpload, setShowUpload] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [copied, setCopied] = useState(false);
 
   const {
     data: album,
     isLoading,
     error,
   } = useQuery<Album>({
-    queryKey: ["album", albumId],
-    queryFn: () => fetchAlbum(albumId),
+    queryKey: ["album", albumId, sortOrder],
+    queryFn: () => fetchAlbum(albumId, sortOrder),
     enabled: Boolean(albumId),
   });
 
@@ -84,31 +91,41 @@ export function AlbumDetailPage() {
     mutationFn: () => deleteAlbum(albumId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["albums"] });
-      navigate("/");
+      navigate("/albums");
     },
   });
 
   const deletePhotoMutation = useMutation({
     mutationFn: (photoId: number) => deletePhoto(photoId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["album", albumId] });
+      queryClient.invalidateQueries({ queryKey: ["album", albumId, sortOrder] });
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+    },
+  });
+
+  const shareMutation = useMutation({
+    mutationFn: () => toggleShareAlbum(albumId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["album", albumId, sortOrder] });
       queryClient.invalidateQueries({ queryKey: ["albums"] });
     },
   });
 
   const uploadMutation = useMutation({
-    mutationFn: (payload: UploadValues) =>
+    mutationFn: (payload: UploadValues & { files: File[] }) =>
       uploadPhotos(albumId, {
         files: payload.files,
         title: payload.title,
         description: payload.description,
         acquisitionDate: payload.acquisitionDate,
-        predominantColor: payload.predominantColor,
+        predominantColor: payload.predominantColor ? converterCor(payload.predominantColor) : undefined,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["album", albumId] });
+      queryClient.invalidateQueries({ queryKey: ["album", albumId, sortOrder] });
       queryClient.invalidateQueries({ queryKey: ["albums"] });
       setShowUpload(false);
+      setSelectedFiles([]);
+      uploadForm.reset();
     },
   });
 
@@ -116,8 +133,34 @@ export function AlbumDetailPage() {
     resolver: zodResolver(uploadSchema),
   });
 
+  const handleFilesSelected = (files: File[]) => {
+    setSelectedFiles(prev => [...prev, ...files]);
+  };
+
+  const shareUrl = album?.shareToken
+    ? `${window.location.origin}/public/album/${album.shareToken}`
+    : null;
+
+  const copyShareLink = () => {
+    if (shareUrl) {
+      navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   if (!albumId) {
-    return <div className="empty-state">Álbum inválido.</div>;
+    return (
+      <div className="card text-center py-16">
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+          <FolderOpen size={28} className="text-primary" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">Álbum inválido</h3>
+        <p className="text-muted-foreground">
+          Não foi possível identificar o álbum solicitado.
+        </p>
+      </div>
+    );
   }
 
   const handleDeleteAlbum = () => {
@@ -137,162 +180,281 @@ export function AlbumDetailPage() {
   };
 
   if (isLoading) {
-    return <div className="empty-state">Carregando álbum...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+        <span className="text-muted-foreground">Carregando álbum...</span>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="empty-state">Não foi possível carregar o álbum.</div>;
+    return (
+      <div className="card text-center py-16">
+        <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-4">
+          <FolderOpen size={28} className="text-destructive" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">Erro ao carregar</h3>
+        <p className="text-muted-foreground">
+          Não foi possível carregar o álbum. Tente novamente.
+        </p>
+      </div>
+    );
   }
 
   if (!album) {
-    return <div className="empty-state">Álbum não encontrado.</div>;
+    return (
+      <div className="card text-center py-16">
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+          <FolderOpen size={28} className="text-primary" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">Álbum não encontrado</h3>
+        <p className="text-muted-foreground">
+          O álbum que você procura não existe ou foi removido.
+        </p>
+      </div>
+    );
   }
 
   const photoCount = album.photos?.length ?? 0;
 
+  // Pagination
+  const totalPages = Math.ceil(photoCount / ITEMS_PER_PAGE);
+  const paginatedPhotos = useMemo(() => {
+    const photos = album.photos || [];
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return photos.slice(start, start + ITEMS_PER_PAGE);
+  }, [album.photos, currentPage]);
+
+  // Reset to page 1 when sort changes
+  const handleSortChange = (order: SortOrder) => {
+    setSortOrder(order);
+    setCurrentPage(1);
+  };
+
   return (
-    <div className="page-board">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 12,
-          gap: 12,
-          flexWrap: "wrap",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <Link to="/">
-            <Button variant="ghost" icon={<ArrowLeft size={16} />}>
-              Voltar
-            </Button>
-          </Link>
-          <div className="badge">{photoCount} fotos</div>
-        </div>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <Button
-            variant="ghost"
-            onClick={() => setShowEdit(true)}
-            icon={<Edit3 size={16} />}
-          >
-            Editar álbum
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setShowUpload(true)}
-            icon={<ImagePlus size={16} />}
-          >
-            Adicionar fotos
-          </Button>
-          <Button
-            variant="danger"
-            onClick={handleDeleteAlbum}
-            disabled={photoCount > 0}
-            icon={<Trash2 size={16} />}
-          >
-            Excluir álbum
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-6">
+      {/* Breadcrumb / Navigation */}
+      <Link to="/albums" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+        <ArrowLeft size={18} />
+        <span>Voltar aos álbuns</span>
+      </Link>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-          marginBottom: 16,
-          flexWrap: "wrap",
-        }}
-      >
+      {/* Album Header */}
+      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
         <div>
-          <h2 style={{ margin: 0 }}>{album.title}</h2>
-          <p className="tagline" style={{ marginTop: 4 }}>
-            {album.description}
-          </p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{album.title}</h1>
+          {album.description && (
+            <p className="text-muted-foreground max-w-2xl">{album.description}</p>
+          )}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div className="badge">
-            <Wand2 size={16} /> Visualizar como
-          </div>
-          <ViewToggle value={view} onChange={setView} />
+
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-sm text-primary whitespace-nowrap">
+            <Image size={14} />
+            {photoCount} {photoCount === 1 ? "foto" : "fotos"}
+          </span>
+          <StarBorder as="button" onClick={() => setShowShare(true)}>
+            <Share2 size={16} /> {album.isPublic ? "Compartilhado" : "Compartilhar"}
+          </StarBorder>
+          <StarBorder as="button" onClick={() => setShowEdit(true)}>
+            <Edit3 size={16} /> Editar
+          </StarBorder>
+          <button onClick={() => setShowUpload(true)} className="btn btn-primary">
+            <ImagePlus size={16} /> Adicionar fotos
+          </button>
+          {photoCount === 0 && (
+            <button onClick={handleDeleteAlbum} className="btn btn-danger">
+              <Trash2 size={16} /> Excluir
+            </button>
+          )}
         </div>
       </div>
 
+      {/* View Toggle & Sort */}
+      {photoCount > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <SortSelect value={sortOrder} onChange={handleSortChange} />
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">Visualização:</span>
+            <ViewToggle value={view} onChange={setView} />
+          </div>
+        </div>
+      )}
+
+      {/* Photos Content */}
       {view === "grid" ? (
         <PhotoGrid
-          photos={album.photos || []}
+          photos={paginatedPhotos}
           onSelect={setSelectedPhoto}
           onDelete={handleDeletePhoto}
         />
       ) : (
         <PhotoTable
-          photos={album.photos || []}
+          photos={paginatedPhotos}
           onSelect={setSelectedPhoto}
           onDelete={handleDeletePhoto}
         />
       )}
 
+      {/* Pagination */}
+      {photoCount > ITEMS_PER_PAGE && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          itemsPerPage={ITEMS_PER_PAGE}
+          totalItems={photoCount}
+        />
+      )}
+
+      {/* Photo Preview Modal */}
       <PhotoPreview photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} />
 
+      {/* Upload Modal */}
       <Modal
         open={showUpload}
-        onClose={() => setShowUpload(false)}
+        onClose={() => {
+          setShowUpload(false);
+          setSelectedFiles([]);
+          uploadForm.reset();
+        }}
         title="Adicionar novas fotos"
-        footer={
-          <Button
-            variant="primary"
-            onClick={uploadForm.handleSubmit((values) => uploadMutation.mutate(values))}
-            disabled={uploadMutation.isPending}
-          >
-            {uploadMutation.isPending ? "Enviando..." : "Enviar"}
-          </Button>
-        }
+        size="large"
       >
         <form
-          className="stack"
-          onSubmit={uploadForm.handleSubmit((values) => uploadMutation.mutate(values))}
+          className="space-y-6"
+          onSubmit={uploadForm.handleSubmit((values) => {
+            if (selectedFiles.length === 0) return;
+            uploadMutation.mutate({ ...values, files: selectedFiles });
+          })}
         >
-          <Input
-            label="Título"
-            placeholder="Opcional - usa o nome do arquivo por padrão"
-            {...uploadForm.register("title")}
+          <DropZone
+            onFilesSelected={handleFilesSelected}
+            selectedCount={selectedFiles.length}
           />
+
+          {selectedFiles.length > 0 && (
+            <div className="flex items-center justify-between p-3 bg-card-hover rounded-lg">
+              <span className="text-sm text-foreground">
+                {selectedFiles.length} {selectedFiles.length === 1 ? "arquivo selecionado" : "arquivos selecionados"}
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedFiles([])}
+                className="text-sm text-muted-foreground hover:text-destructive transition-colors"
+              >
+                Limpar seleção
+              </button>
+            </div>
+          )}
+
+          <div className="border-t border-border" />
+
+          <p className="text-sm text-muted-foreground">
+            Os campos abaixo são opcionais e serão aplicados a todas as fotos enviadas.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input
+              label="Título"
+              placeholder="Nome das fotos"
+              hint="Se vazio, usa o nome do arquivo"
+              {...uploadForm.register("title")}
+            />
+            <Input
+              label="Data de aquisição"
+              type="datetime-local"
+              {...uploadForm.register("acquisitionDate")}
+            />
+          </div>
+
           <Textarea
             label="Descrição"
-            placeholder="Contextualize a imagem"
+            placeholder="Descreva o contexto das imagens..."
+            rows={2}
             {...uploadForm.register("description")}
           />
-          <Input
-            label="Data/Hora de aquisição"
-            type="datetime-local"
-            {...uploadForm.register("acquisitionDate")}
-          />
+
           <Input
             label="Cor predominante"
             type="text"
-            placeholder="#00ffc2 (opcional - detectamos automaticamente)"
+            placeholder="Ex: azul, vermelho, #00ffc2"
+            hint="Use nomes em português ou código hexadecimal"
             {...uploadForm.register("predominantColor")}
           />
-          <div className="input-field">
-            <label>Arquivos</label>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              className="input"
-              {...uploadForm.register("files")}
-            />
-            {uploadForm.formState.errors.files && (
-              <span className="error">
-                {uploadForm.formState.errors.files.message as string}
-              </span>
-            )}
+
+          <div className="flex justify-end gap-3">
+            <StarBorder
+              as="button"
+              type="button"
+              onClick={() => {
+                setShowUpload(false);
+                setSelectedFiles([]);
+                uploadForm.reset();
+              }}
+            >
+              Cancelar
+            </StarBorder>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={uploadMutation.isPending || selectedFiles.length === 0}
+            >
+              {uploadMutation.isPending ? "Enviando..." : "Enviar fotos"}
+            </button>
           </div>
         </form>
       </Modal>
 
+      {/* Share Modal */}
+      <Modal
+        open={showShare}
+        onClose={() => setShowShare(false)}
+        title="Compartilhar álbum"
+      >
+        <div className="space-y-6">
+          <p className="text-muted-foreground">
+            {album.isPublic
+              ? "Este álbum está público. Qualquer pessoa com o link pode visualizá-lo."
+              : "Torne este álbum público para compartilhar com outras pessoas."}
+          </p>
+
+          {album.isPublic && shareUrl && (
+            <div className="flex items-center gap-2">
+              <div className="flex-1 p-3 bg-card-hover rounded-lg border border-border text-sm text-foreground truncate">
+                {shareUrl}
+              </div>
+              <button
+                onClick={copyShareLink}
+                className="btn btn-secondary"
+                title="Copiar link"
+              >
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+              </button>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3">
+            <StarBorder as="button" type="button" onClick={() => setShowShare(false)}>
+              Fechar
+            </StarBorder>
+            <button
+              onClick={() => shareMutation.mutate()}
+              className={`btn ${album.isPublic ? "btn-danger" : "btn-primary"}`}
+              disabled={shareMutation.isPending}
+            >
+              {shareMutation.isPending
+                ? "Processando..."
+                : album.isPublic
+                ? "Tornar privado"
+                : "Tornar público"}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Edit Album Modal */}
       <Modal
         open={showEdit}
         onClose={() => setShowEdit(false)}

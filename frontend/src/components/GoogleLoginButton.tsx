@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
-import { loginWithGoogle } from "../services/auth";
 import { useAuth } from "../context/AuthContext";
+import { loginWithGoogle } from "../services/auth";
 
 declare global {
   interface Window {
@@ -72,12 +72,12 @@ export function GoogleLoginButton() {
   }
 
   return (
-    <div className="social-login">
+    <div className="flex flex-col items-center">
       <div ref={buttonRef} aria-label="Continuar com Google" />
       {mutation.isError && (
-        <div className="error" style={{ marginTop: 8 }}>
+        <p className="text-sm text-destructive mt-2">
           Não foi possível autenticar pelo Google.
-        </div>
+        </p>
       )}
     </div>
   );

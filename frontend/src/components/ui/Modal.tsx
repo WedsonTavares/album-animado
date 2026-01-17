@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactNode } from "react";
-import { Button } from "./Button";
+import { X } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -8,60 +8,42 @@ interface Props {
   title: string;
   children: ReactNode;
   footer?: ReactNode;
+  size?: 'default' | 'large';
 }
 
-export function Modal({ open, onClose, title, children, footer }: Props) {
+export function Modal({ open, onClose, title, children, footer, size = 'default' }: Props) {
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          className="modal-backdrop"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          onClick={(e) => e.target === e.currentTarget && onClose()}
         >
           <motion.div
-            className="modal-content"
-            initial={{ y: 24, opacity: 0.9 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-            transition={{ duration: 0.18 }}
+            className={`bg-card border border-border rounded-2xl shadow-2xl w-full ${size === 'large' ? 'max-w-2xl' : 'max-w-md'}`}
+            initial={{ y: 24, opacity: 0, scale: 0.98 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 20, opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
-                marginBottom: 12,
-              }}
-            >
-              <div>
-                <h3 style={{ margin: 0 }}>{title}</h3>
-                <p className="tagline" style={{ margin: 0 }}>
-                  Ajuste os detalhes e confirme
-                </p>
-              </div>
-              <Button variant="ghost" onClick={onClose}>
-                Fechar
-              </Button>
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+              <button
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-card-hover transition-colors"
+                onClick={onClose}
+                aria-label="Fechar"
+              >
+                <X size={20} />
+              </button>
             </div>
-            <div className="divider" />
-            <div className="stack">{children}</div>
+            <div className="p-6">{children}</div>
             {footer && (
-              <>
-                <div className="divider" />
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: 12,
-                    marginTop: 12,
-                  }}
-                >
-                  {footer}
-                </div>
-              </>
+              <div className="flex justify-end gap-3 p-6 pt-0">
+                {footer}
+              </div>
             )}
           </motion.div>
         </motion.div>

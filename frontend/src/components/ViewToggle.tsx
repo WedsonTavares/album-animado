@@ -1,4 +1,4 @@
-import { LayoutGrid, Rows3 } from "lucide-react";
+import { LayoutGrid, List } from "lucide-react";
 import { ViewMode } from "../types";
 
 interface Props {
@@ -8,20 +8,22 @@ interface Props {
 
 export function ViewToggle({ value, onChange }: Props) {
   return (
-    <div className="switcher">
+    <div className="inline-flex gap-1">
       <button
-        className={value === "grid" ? "active" : ""}
+        className={`p-2.5 rounded-lg transition-colors ${value === "grid" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("grid")}
         type="button"
+        title="Visualizar em grade"
       >
-        <LayoutGrid size={16} /> Miniaturas
+        <LayoutGrid size={18} />
       </button>
       <button
-        className={value === "table" ? "active" : ""}
+        className={`p-2.5 rounded-lg transition-colors ${value === "table" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("table")}
         type="button"
+        title="Visualizar em lista"
       >
-        <Rows3 size={16} /> Tabela
+        <List size={18} />
       </button>
     </div>
   );

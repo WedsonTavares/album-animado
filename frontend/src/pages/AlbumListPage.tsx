@@ -1,18 +1,18 @@
-import { Plus, RefreshCcw } from "lucide-react";
+import { Plus, FolderOpen } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Album } from "../types";
-import { fetchAlbums, createAlbum } from "../services/albums";
-import { Button } from "../components/ui/Button";
+import { Album, ViewMode } from "../types";
+import { fetchAlbums, createAlbum, deleteAlbum } from "../services/albums";
 import { AlbumCard } from "../components/albums/AlbumCard";
+import { AlbumTable } from "../components/albums/AlbumTable";
+import { ViewToggle } from "../components/ViewToggle";
 import { Modal } from "../components/ui/Modal";
-import {
-  AlbumForm,
-  AlbumFormValues,
-} from "../components/albums/AlbumForm";
+import { AlbumForm, AlbumFormValues } from "../components/albums/AlbumForm";
+import StarBorder from "../components/ui/StarBorder";
 
 export function AlbumListPage() {
   const [open, setOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const queryClient = useQueryClient();
   const { data: albums = [], isLoading } = useQuery<Album[]>({
     queryKey: ["albums"],
@@ -27,53 +27,72 @@ export function AlbumListPage() {
     },
   });
 
-  const refresh = () =>
-    queryClient.invalidateQueries({ queryKey: ["albums"] });
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteAlbum(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+    },
+  });
+
+  const handleDelete = (album: Album) => {
+    const photoCount = album._count?.photos ?? album.photos?.length ?? 0;
+    if (photoCount > 0) {
+      alert("Não é possível excluir um álbum que contém fotos.");
+      return;
+    }
+    if (confirm(`Deseja excluir o álbum "${album.title}"?`)) {
+      deleteMutation.mutate(album.id);
+    }
+  };
 
   return (
-    <div className="page-board">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 14,
-          gap: 12,
-          flexWrap: "wrap",
-        }}
-      >
-        <div>
-          <h2 style={{ margin: 0 }}>Meus álbuns de fotos</h2>
-          <p className="tagline" style={{ marginTop: 4 }}>
-            Organize e acesse todos os seus álbuns em um só lugar.
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <Button variant="ghost" onClick={refresh} icon={<RefreshCcw size={16} />}>
-            Atualizar
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setOpen(true)}
-            icon={<Plus size={16} />}
-          >
-            Criar novo álbum
-          </Button>
+    <div className="space-y-8">
+      {/* Summary Header */}
+      <div className="card space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Meus Álbuns de Fotos</h1>
+            <p className="text-muted-foreground">
+              Organize suas memórias em álbuns, adicione fotos e compartilhe com quem você ama.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <ViewToggle value={viewMode} onChange={setViewMode} />
+            <button onClick={() => setOpen(true)} className="btn btn-primary">
+              <Plus size={16} /> Criar novo álbum
+            </button>
+          </div>
         </div>
       </div>
-
+      {/* Content */}
       {isLoading ? (
-        <div className="empty-state">Carregando álbuns...</div>
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+          <span className="text-muted-foreground">Carregando seus álbuns...</span>
+        </div>
       ) : albums.length === 0 ? (
-        <div className="empty-state glass-panel card">
-          Nenhum álbum criado ainda. Clique em &quot;Criar novo álbum&quot; para começar.
+        <div className="card text-center py-16">
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+            <FolderOpen size={28} className="text-primary" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Nenhum álbum ainda</h3>
+          <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+            Comece criando seu primeiro álbum para organizar suas fotos favoritas.
+          </p>
+          <button onClick={() => setOpen(true)} className="btn btn-primary">
+            <Plus size={16} /> Criar primeiro álbum
+          </button>
         </div>
       ) : (
-        <div className="grid album-grid">
-          {albums.map((album) => (
-            <AlbumCard key={album.id} album={album} />
-          ))}
-        </div>
+        viewMode === "grid" ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {albums.map((album) => (
+              <AlbumCard key={album.id} album={album} onDelete={handleDelete} />
+            ))}
+          </div>
+        ) : (
+          <AlbumTable albums={albums} onDelete={handleDelete} />
+        )
       )}
 
       <Modal
@@ -81,13 +100,9 @@ export function AlbumListPage() {
         onClose={() => setOpen(false)}
         title="Criar novo álbum"
         footer={
-          <Button
-            variant="ghost"
-            onClick={() => setOpen(false)}
-            type="button"
-          >
+          <StarBorder as="button" onClick={() => setOpen(false)}>
             Cancelar
-          </Button>
+          </StarBorder>
         }
       >
         <AlbumForm

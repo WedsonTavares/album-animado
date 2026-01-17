@@ -1,73 +1,95 @@
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Trash2, Calendar, ImageOff } from "lucide-react";
 import { Photo } from "../../types";
 import { assetUrl, formatBytes, formatDate } from "../../utils/format";
-import { Button } from "../ui/Button";
 
 interface Props {
   photos: Photo[];
   onSelect: (photo: Photo) => void;
-  onDelete: (photo: Photo) => void;
+  onDelete?: (photo: Photo) => void;
 }
 
 export function PhotoGrid({ photos, onSelect, onDelete }: Props) {
   if (photos.length === 0) {
-    return <div className="empty-state">Nenhuma foto aqui ainda.</div>;
+    return (
+      <div className="card text-center py-16">
+        <div className="w-16 h-16 rounded-2xl bg-muted/10 flex items-center justify-center mx-auto mb-4">
+          <ImageOff size={28} className="text-muted" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">Nenhuma foto ainda</h3>
+        <p className="text-muted-foreground">
+          Adicione fotos para preencher este álbum.
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="grid album-grid">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {photos.map((photo) => (
-        <div key={photo.id} className="glass-panel card" style={{ gap: 12 }}>
-          <div
-            style={{
-              height: 140,
-              borderRadius: 12,
-              overflow: "hidden",
-              border: "1px solid var(--border)",
-            }}
+        <div key={photo.id} className="group card p-0 overflow-hidden">
+          {/* Image */}
+          <div 
+            className="relative aspect-square bg-card-hover cursor-pointer overflow-hidden"
+            onClick={() => onSelect(photo)}
           >
             <img
               src={assetUrl(photo.filePath)}
               alt={photo.title}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              loading="lazy"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div className="badge">{formatBytes(photo.sizeBytes)}</div>
-            {photo.predominantColor && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <div
-                  className="color-dot"
-                  style={{ background: photo.predominantColor }}
-                />
-                <span className="muted" style={{ fontSize: 13 }}>
-                  {photo.predominantColor}
-                </span>
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+              <div className="flex flex-col items-center text-white">
+                <Eye size={24} />
+                <span className="text-sm mt-1">Visualizar</span>
               </div>
+            </div>
+            {photo.predominantColor && (
+              <div
+                className="absolute bottom-2 left-2 w-6 h-6 rounded-full border-2 border-white shadow-lg"
+                style={{ background: photo.predominantColor }}
+                title={photo.predominantColor}
+              />
             )}
           </div>
-          <div style={{ fontWeight: 700, fontSize: 16 }}>{photo.title}</div>
-          <p className="muted" style={{ margin: 0 }}>
-            {photo.description || "Sem descrição"}
-          </p>
-          <div className="muted" style={{ fontSize: 13 }}>
-            {formatDate(photo.acquisitionDate)}
+
+          {/* Body */}
+          <div className="p-3">
+            <h4 className="font-medium text-foreground truncate">{photo.title}</h4>
+            <p className="text-sm text-muted-foreground truncate">
+              {photo.description || "Sem descrição"}
+            </p>
+            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <Calendar size={12} />
+                {formatDate(photo.acquisitionDate)}
+              </span>
+              <span>{formatBytes(photo.sizeBytes)}</span>
+            </div>
           </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <Button
-              variant="ghost"
+
+          {/* Actions */}
+          <div className="flex border-t border-border">
+            <button
+              className={`${onDelete ? 'flex-1' : 'w-full'} flex items-center justify-center gap-2 py-2.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors`}
               onClick={() => onSelect(photo)}
-              icon={<Eye size={16} />}
+              title="Abrir foto"
             >
-              Abrir
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => onDelete(photo)}
-              icon={<Trash2 size={16} />}
-            >
-              Excluir
-            </Button>
+              <Eye size={16} />
+              {!onDelete && <span>Visualizar</span>}
+            </button>
+            {onDelete && (
+              <>
+                <div className="w-px bg-border" />
+                <button
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+                  onClick={() => onDelete(photo)}
+                  title="Excluir foto"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </>
+            )}
           </div>
         </div>
       ))}

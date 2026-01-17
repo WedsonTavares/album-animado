@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 
@@ -32,7 +31,7 @@ export function AlbumForm({ defaultValues, onSubmit, submitting }: Props) {
 
   return (
     <form
-      className="stack"
+      className="space-y-4"
       onSubmit={handleSubmit(async (values) => {
         await onSubmit(values);
       })}
@@ -52,10 +51,14 @@ export function AlbumForm({ defaultValues, onSubmit, submitting }: Props) {
         rows={3}
         {...register("description")}
       />
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
-        <Button type="submit" variant="primary" disabled={submitting}>
-          {submitting ? "Salvando..." : "Salvar"}
-        </Button>
+      <div className="flex justify-end pt-2">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={submitting}
+        >
+          {submitting ? "Salvando..." : "Salvar álbum"}
+        </button>
       </div>
     </form>
   );

@@ -1,84 +1,103 @@
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Trash2, ImageOff } from "lucide-react";
 import { Photo } from "../../types";
 import { assetUrl, formatBytes, formatDate } from "../../utils/format";
-import { Button } from "../ui/Button";
 
 interface Props {
   photos: Photo[];
   onSelect: (photo: Photo) => void;
-  onDelete: (photo: Photo) => void;
+  onDelete?: (photo: Photo) => void;
 }
 
 export function PhotoTable({ photos, onSelect, onDelete }: Props) {
   if (photos.length === 0) {
-    return <div className="empty-state">Nenhuma foto aqui ainda.</div>;
+    return (
+      <div className="card text-center py-16">
+        <div className="w-16 h-16 rounded-2xl bg-muted/10 flex items-center justify-center mx-auto mb-4">
+          <ImageOff size={28} className="text-muted" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">Nenhuma foto ainda</h3>
+        <p className="text-muted-foreground">
+          Adicione fotos para preencher este álbum.
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="glass-panel card table-wrapper">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Foto</th>
-            <th>Nome</th>
-            <th>Tamanho</th>
-            <th>Data de aquisição</th>
-            <th>Cor</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {photos.map((photo) => (
-            <tr key={photo.id}>
-              <td style={{ width: 70 }}>
-                <img
-                  src={assetUrl(photo.filePath)}
-                  alt={photo.title}
-                  style={{
-                    width: 56,
-                    height: 56,
-                    objectFit: "cover",
-                    borderRadius: 10,
-                    border: "1px solid var(--border)",
-                  }}
-                />
-              </td>
-              <td>{photo.title}</td>
-              <td>{formatBytes(photo.sizeBytes)}</td>
-              <td>{formatDate(photo.acquisitionDate)}</td>
-              <td>
-                {photo.predominantColor ? (
-                  <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span
-                      className="color-dot"
-                      style={{ background: photo.predominantColor }}
-                    />
-                    <span className="muted">{photo.predominantColor}</span>
-                  </span>
-                ) : (
-                  <span className="muted">-</span>
-                )}
-              </td>
-              <td style={{ display: "flex", gap: 8 }}>
-                <Button
-                  variant="ghost"
-                  onClick={() => onSelect(photo)}
-                  icon={<Eye size={16} />}
-                >
-                  Abrir
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => onDelete(photo)}
-                  icon={<Trash2 size={16} />}
-                >
-                  Excluir
-                </Button>
-              </td>
+    <div className="card p-0 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-border bg-card-hover/50">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider w-20">Foto</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nome</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tamanho</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Data</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Cor</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider w-28">Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {photos.map((photo) => (
+              <tr key={photo.id} className="hover:bg-card-hover/30 transition-colors">
+                <td className="px-4 py-3">
+                  <div 
+                    className="w-12 h-12 rounded-lg overflow-hidden bg-card-hover cursor-pointer"
+                    onClick={() => onSelect(photo)}
+                  >
+                    <img
+                      src={assetUrl(photo.filePath)}
+                      alt={photo.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="font-medium text-foreground">{photo.title}</div>
+                  <div className="text-sm text-muted-foreground truncate max-w-xs">
+                    {photo.description || "Sem descrição"}
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{formatBytes(photo.sizeBytes)}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(photo.acquisitionDate)}</td>
+                <td className="px-4 py-3">
+                  {photo.predominantColor ? (
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="w-4 h-4 rounded-full border border-border"
+                        style={{ background: photo.predominantColor }}
+                      />
+                      <span className="text-sm text-muted-foreground">{photo.predominantColor}</span>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-muted">-</span>
+                  )}
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1">
+                    <button
+                      className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                      onClick={() => onSelect(photo)}
+                      title="Abrir"
+                    >
+                      <Eye size={16} />
+                    </button>
+                    {onDelete && (
+                      <button
+                        className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        onClick={() => onDelete(photo)}
+                        title="Excluir"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

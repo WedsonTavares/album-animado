@@ -22,6 +22,8 @@ export interface Album {
   title: string;
   description: string;
   userId?: number;
+  isPublic?: boolean;
+  shareToken?: string | null;
   createdAt: string;
   updatedAt: string;
   photos?: Photo[];
@@ -29,3 +31,4 @@ export interface Album {
 }
 
 export type ViewMode = "grid" | "table";
+export type SortOrder = "asc" | "desc";

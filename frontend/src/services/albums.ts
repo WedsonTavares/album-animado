@@ -1,4 +1,4 @@
-import { Album, Photo } from "../types";
+import { Album, Photo, SortOrder } from "../types";
 import api from "./api";
 
 export const fetchAlbums = async () => {
@@ -6,8 +6,15 @@ export const fetchAlbums = async () => {
   return res.data;
 };
 
-export const fetchAlbum = async (id: number) => {
-  const res = await api.get<Album>(`/albums/${id}`);
+export const fetchAlbum = async (id: number, sort: SortOrder = "desc") => {
+  const res = await api.get<Album>(`/albums/${id}?sort=${sort}`);
+  return res.data;
+};
+
+export const fetchPublicAlbum = async (token: string, sort: SortOrder = "desc") => {
+  const res = await api.get<Album & { user?: { name?: string; email: string } }>(
+    `/public/albums/${token}?sort=${sort}`
+  );
   return res.data;
 };
 
@@ -31,6 +38,15 @@ export const deleteAlbum = async (id: number) => {
   await api.delete(`/albums/${id}`);
 };
 
+export const toggleShareAlbum = async (id: number) => {
+  const res = await api.post<{
+    isPublic: boolean;
+    shareToken: string | null;
+    shareUrl: string | null;
+  }>(`/albums/${id}/share`);
+  return res.data;
+};
+
 export const uploadPhotos = async (
   albumId: number,
   payload: {
@@ -52,9 +68,7 @@ export const uploadPhotos = async (
   if (payload.predominantColor)
     formData.append("predominantColor", payload.predominantColor);
 
-  const res = await api.post<Photo[]>(`/albums/${albumId}/photos`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const res = await api.post<Photo[]>(`/albums/${albumId}/photos`, formData);
 
   return res.data;
 };
