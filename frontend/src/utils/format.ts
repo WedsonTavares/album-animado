@@ -17,6 +17,11 @@ export function formatBytes(bytes: number) {
 }
 
 export function assetUrl(path: string) {
+  // Se já for uma URL completa (Supabase Storage), retorna diretamente
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  // Fallback para URLs antigas locais (compatibilidade)
   const apiBase =
     import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
     "http://localhost:4000/api";

@@ -5,7 +5,6 @@ import authRoutes from "./routes/authRoutes";
 import albumRoutes from "./routes/albumRoutes";
 import photoRoutes from "./routes/photoRoutes";
 import { errorHandler } from "./middleware/errorHandler";
-import { uploadPath } from "./config/upload";
 
 const app = express();
 
@@ -17,7 +16,6 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/uploads", express.static(uploadPath));
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });

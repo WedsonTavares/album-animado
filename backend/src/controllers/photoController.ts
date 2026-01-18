@@ -6,7 +6,8 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { extractPredominantColor } from "../utils/color";
 import { extractAcquisitionDate } from "../utils/exif";
 import { HttpError } from "../utils/httpError";
-import { resolveUploadPath } from "../config/upload";
+import { supabase, supabaseBucket } from "../utils/supabase";
+import env from "../config/env";
 
 const getUserId = (req: AuthenticatedRequest) => {
   if (!req.user) {
@@ -50,18 +51,39 @@ export const addPhotos = asyncHandler(async (req: AuthenticatedRequest, res) => 
       (req.body.title as string | undefined) || path.parse(file.originalname).name;
     const description = (req.body.description as string | undefined) || null;
 
+    // Upload para Supabase Storage
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(supabaseBucket)
+      .upload(fileName, buffer, {
+        contentType: file.mimetype,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw new HttpError(500, `Erro ao fazer upload: ${uploadError.message}`);
+    }
+
+    // Gerar URL pública
+    const { data: urlData } = supabase.storage
+      .from(supabaseBucket)
+      .getPublicUrl(fileName);
+
     const created = await prisma.photo.create({
       data: {
         title,
         description,
-        fileName: file.filename,
-        filePath: path.posix.join("/uploads", file.filename),
+        fileName,
+        filePath: urlData.publicUrl,
         sizeBytes: file.size,
         acquisitionDate,
         predominantColor,
         albumId,
       },
     });
+
+    // Remover arquivo temporário local
+    await fs.unlink(file.path).catch(() => null);
 
     results.push(created);
   }
@@ -85,8 +107,11 @@ export const deletePhoto = asyncHandler(
 
     await prisma.photo.delete({ where: { id: photoId } });
 
-    const fullPath = resolveUploadPath(photo.fileName);
-    fs.unlink(fullPath).catch(() => null);
+    // Deletar do Supabase Storage
+    await supabase.storage
+      .from(supabaseBucket)
+      .remove([photo.fileName])
+      .catch(() => null);
 
     res.status(204).send();
   },

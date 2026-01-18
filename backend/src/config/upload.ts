@@ -2,9 +2,10 @@ import fs from "fs";
 import multer from "multer";
 import path from "path";
 import { randomUUID } from "crypto";
-import env from "./env";
+import os from "os";
 
-export const uploadPath = path.resolve(process.cwd(), env.uploadDir);
+// Usar pasta temporária do sistema para arquivos temporários durante upload
+export const uploadPath = path.resolve(os.tmpdir(), "dtrtis-uploads");
 fs.mkdirSync(uploadPath, { recursive: true });
 
 const storage = multer.diskStorage({
@@ -30,8 +31,3 @@ export const upload = multer({
   fileFilter,
   limits: { fileSize: 15 * 1024 * 1024 },
 });
-
-export const resolveUploadPath = (fileName: string) =>
-  path.join(uploadPath, fileName);
-
-export const publicUploadsUrl = "/uploads";
