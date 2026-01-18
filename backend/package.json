@@ -12,6 +12,8 @@
     "postinstall": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:reset": "prisma migrate reset",
     "prisma:migrate": "prisma migrate deploy",
     "lint": "echo \"Add linter if needed\""
   },

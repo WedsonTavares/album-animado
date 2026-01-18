@@ -2,7 +2,7 @@
 builder = "nixpacks"
 
 [build.nixpacks]
-buildCmd = "npm install && npm run build && npx prisma db push"
+buildCmd = "npm ci && npm run build && npx prisma migrate deploy"
 
 [deploy]
 startCommand = "npm start"

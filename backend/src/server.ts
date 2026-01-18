@@ -5,6 +5,8 @@ import authRoutes from "./routes/authRoutes";
 import albumRoutes from "./routes/albumRoutes";
 import photoRoutes from "./routes/photoRoutes";
 import { errorHandler } from "./middleware/errorHandler";
+import { asyncHandler } from "./utils/asyncHandler";
+import { prisma } from "./prisma";
 
 const app = express();
 
@@ -28,6 +30,14 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
+
+app.get(
+  "/health/db",
+  asyncHandler(async (_req, res) => {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: "ok" });
+  }),
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/albums", albumRoutes);

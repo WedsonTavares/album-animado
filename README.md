@@ -4,7 +4,7 @@ Aplicação full-stack organizada em pastas isoladas (`frontend` e `backend`) co
 
 ## Stack
 - **Frontend:** React + Vite + TypeScript, React Router 7, React Query, React Hook Form + Zod, Tailwind CSS v4, framer-motion, lucide-react.
-- **Backend:** Node + Express + TypeScript, Prisma + PostgreSQL (Neon), Multer para uploads, JWT para autenticação, exifr + sharp para metadados/cor, Google OAuth.
+- **Backend:** Node + Express + TypeScript, Prisma + PostgreSQL (Supabase), Supabase Storage, Multer para uploads, JWT para autenticação, exifr + sharp para metadados/cor, Google OAuth.
 - **Padrões:** componentes reutilizáveis, CSS com variáveis de tema, validação nos dois lados, rotas protegidas.
 
 ## Funcionalidades
@@ -28,7 +28,7 @@ Aplicação full-stack organizada em pastas isoladas (`frontend` e `backend`) co
 cd backend
 cp .env.example .env   # configure DATABASE_URL, JWT_SECRET, GOOGLE_CLIENT_ID
 npm install
-npm run prisma:push    # sincroniza o schema com o banco
+npm run prisma:migrate:dev  # cria/aplica migrations no banco
 npm run dev            # http://localhost:4000
 ```
 
@@ -44,11 +44,13 @@ npm run dev            # http://localhost:5173
 
 ## 🚀 Deploy em Produção
 
-### Banco de Dados (Neon - PostgreSQL gratuito)
+### Banco de Dados + Storage (Supabase)
 
-1. Crie uma conta em [neon.tech](https://neon.tech)
-2. Crie um novo projeto
-3. Copie a **Connection String** (formato: `postgresql://user:pass@host/db?sslmode=require`)
+1. Crie uma conta em [supabase.com](https://supabase.com)
+2. Crie um projeto no Supabase
+3. Em **Project Settings → Database**, copie a **Connection string** e use como `DATABASE_URL`
+4. Em **Project Settings → API**, copie `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`
+5. Crie/garanta o bucket do Storage (ex.: `photos`) e defina `SUPABASE_BUCKET=photos`
 
 ### Backend (Railway, Render ou Fly.io)
 
@@ -56,10 +58,13 @@ npm run dev            # http://localhost:5173
 1. Conecte seu repositório GitHub
 2. Configure as variáveis de ambiente:
    ```
-   DATABASE_URL=postgresql://...sua-url-neon...
+   DATABASE_URL=postgresql://...sua-url-supabase...
    JWT_SECRET=sua-chave-secreta-segura
    CLIENT_URL=https://seu-frontend.vercel.app
    GOOGLE_CLIENT_ID=seu-id-google (opcional)
+   SUPABASE_URL=https://xxxx.supabase.co
+   SUPABASE_SERVICE_ROLE_KEY=sua-service-role-key
+   SUPABASE_BUCKET=photos
    ```
 3. Deploy automático!
 
@@ -108,11 +113,15 @@ npm run dev            # http://localhost:5173
 
 ### Backend (.env)
 ```env
-DATABASE_URL="postgresql://..."  # Neon PostgreSQL
+DATABASE_URL="postgresql://...?sslmode=require"  # Supabase PostgreSQL
 JWT_SECRET="sua-chave-secreta"
 CLIENT_URL="http://localhost:5173"
 PORT=4000
 GOOGLE_CLIENT_ID=""              # Opcional
+
+SUPABASE_URL="https://xxxx.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY="..."
+SUPABASE_BUCKET="photos"
 ```
 
 ### Frontend (.env)
@@ -138,4 +147,5 @@ npm run preview          # Preview do build
 
 ---
 
-Desenvolvido para o processo seletivo **Dr. TIS** 🎯
+npm run prisma:migrate:dev  # Dev: cria/aplica migrations
+npm run prisma:migrate      # Prod: aplica migrations (deploy)
