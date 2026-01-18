@@ -7,7 +7,6 @@ import { extractPredominantColor } from "../utils/color";
 import { extractAcquisitionDate } from "../utils/exif";
 import { HttpError } from "../utils/httpError";
 import { supabase, supabaseBucket } from "../utils/supabase";
-import env from "../config/env";
 
 const getUserId = (req: AuthenticatedRequest) => {
   if (!req.user) {

@@ -22,7 +22,7 @@ export function GoogleLoginButton() {
     onSuccess: (data) => {
       setSession(data);
       const redirect = (location.state as { from?: Location })?.from?.pathname;
-      navigate(redirect || "/");
+      navigate(redirect || "/albums");
     },
   });
 
