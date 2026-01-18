@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc && prisma generate && prisma migrate deploy",
+    "build": "tsc && prisma generate",
     "start": "node dist/server.js",
     "postinstall": "prisma generate",
     "prisma:push": "prisma db push",
