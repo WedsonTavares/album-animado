@@ -4,10 +4,16 @@ import { HttpError } from "../utils/httpError";
 
 export function errorHandler(
   err: unknown,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction,
 ) {
+  // Sempre logar erros para debug
+  console.error("=== ERROR ===");
+  console.error("Route:", req.method, req.path);
+  console.error("Error:", err);
+  console.error("=============");
+
   if (err instanceof HttpError) {
     return res.status(err.status).json({ message: err.message });
   }
@@ -20,9 +26,6 @@ export function errorHandler(
     return res.status(400).json({ message: err.message });
   }
 
-  // Log apenas em desenvolvimento
-  if (process.env.NODE_ENV !== "production") {
-    console.error(err);
-  }
-  return res.status(500).json({ message: "Internal server error" });
+  const message = err instanceof Error ? err.message : "Internal server error";
+  return res.status(500).json({ message });
 }
