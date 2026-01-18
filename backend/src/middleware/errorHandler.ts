@@ -20,6 +20,9 @@ export function errorHandler(
     return res.status(400).json({ message: err.message });
   }
 
-  console.error(err);
+  // Log apenas em desenvolvimento
+  if (process.env.NODE_ENV !== "production") {
+    console.error(err);
+  }
   return res.status(500).json({ message: "Internal server error" });
 }
