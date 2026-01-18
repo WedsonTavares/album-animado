@@ -1,7 +1,7 @@
 import fs from "fs";
 import multer from "multer";
 import path from "path";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 import env from "./env";
 
 export const uploadPath = path.resolve(process.cwd(), env.uploadDir);
@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
   },
   filename: (_req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, `${uuid()}${ext}`);
+    cb(null, `${randomUUID()}${ext}`);
   },
 });
 
