@@ -10,11 +10,7 @@ import {
   Check,
   Copy,
 } from "lucide-react";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -134,7 +130,7 @@ export function AlbumDetailPage() {
   });
 
   const handleFilesSelected = (files: File[]) => {
-    setSelectedFiles(prev => [...prev, ...files]);
+    setSelectedFiles((prev) => [...prev, ...files]);
   };
 
   const shareUrl = album?.shareToken
@@ -156,9 +152,7 @@ export function AlbumDetailPage() {
           <FolderOpen size={28} className="text-primary" />
         </div>
         <h3 className="text-lg font-semibold text-foreground mb-2">Álbum inválido</h3>
-        <p className="text-muted-foreground">
-          Não foi possível identificar o álbum solicitado.
-        </p>
+        <p className="text-muted-foreground">Não foi possível identificar o álbum solicitado.</p>
       </div>
     );
   }
@@ -195,9 +189,7 @@ export function AlbumDetailPage() {
           <FolderOpen size={28} className="text-destructive" />
         </div>
         <h3 className="text-lg font-semibold text-foreground mb-2">Erro ao carregar</h3>
-        <p className="text-muted-foreground">
-          Não foi possível carregar o álbum. Tente novamente.
-        </p>
+        <p className="text-muted-foreground">Não foi possível carregar o álbum. Tente novamente.</p>
       </div>
     );
   }
@@ -209,9 +201,7 @@ export function AlbumDetailPage() {
           <FolderOpen size={28} className="text-primary" />
         </div>
         <h3 className="text-lg font-semibold text-foreground mb-2">Álbum não encontrado</h3>
-        <p className="text-muted-foreground">
-          O álbum que você procura não existe ou foi removido.
-        </p>
+        <p className="text-muted-foreground">O álbum que você procura não existe ou foi removido.</p>
       </div>
     );
   }
@@ -284,17 +274,9 @@ export function AlbumDetailPage() {
 
       {/* Photos Content */}
       {view === "grid" ? (
-        <PhotoGrid
-          photos={paginatedPhotos}
-          onSelect={setSelectedPhoto}
-          onDelete={handleDeletePhoto}
-        />
+        <PhotoGrid photos={paginatedPhotos} onSelect={setSelectedPhoto} onDelete={handleDeletePhoto} />
       ) : (
-        <PhotoTable
-          photos={paginatedPhotos}
-          onSelect={setSelectedPhoto}
-          onDelete={handleDeletePhoto}
-        />
+        <PhotoTable photos={paginatedPhotos} onSelect={setSelectedPhoto} onDelete={handleDeletePhoto} />
       )}
 
       {/* Pagination */}
@@ -329,10 +311,7 @@ export function AlbumDetailPage() {
             uploadMutation.mutate({ ...values, files: selectedFiles });
           })}
         >
-          <DropZone
-            onFilesSelected={handleFilesSelected}
-            selectedCount={selectedFiles.length}
-          />
+          <DropZone onFilesSelected={handleFilesSelected} selectedCount={selectedFiles.length} />
 
           {selectedFiles.length > 0 && (
             <div className="flex items-center justify-between p-3 bg-card-hover rounded-lg">
@@ -349,7 +328,7 @@ export function AlbumDetailPage() {
             </div>
           )}
 
-          <div className="border-t border-border" />
+          <div className="border-top border-border" />
 
           <p className="text-sm text-muted-foreground">
             Os campos abaixo são opcionais e serão aplicados a todas as fotos enviadas.
@@ -401,18 +380,14 @@ export function AlbumDetailPage() {
               className="btn btn-primary"
               disabled={uploadMutation.isPending || selectedFiles.length === 0}
             >
-              {uploadMutation.isPending ? "Enviando..." : "Enviar fotos"}
+              {uploadMutation.isPending ? "Enviando..." : "Adicionar fotos"}
             </button>
           </div>
         </form>
       </Modal>
 
       {/* Share Modal */}
-      <Modal
-        open={showShare}
-        onClose={() => setShowShare(false)}
-        title="Compartilhar álbum"
-      >
+      <Modal open={showShare} onClose={() => setShowShare(false)} title="Compartilhar álbum">
         <div className="space-y-6">
           <p className="text-muted-foreground">
             {album.isPublic
@@ -425,11 +400,7 @@ export function AlbumDetailPage() {
               <div className="flex-1 p-3 bg-card-hover rounded-lg border border-border text-sm text-foreground truncate">
                 {shareUrl}
               </div>
-              <button
-                onClick={copyShareLink}
-                className="btn btn-secondary"
-                title="Copiar link"
-              >
+              <button onClick={copyShareLink} className="btn btn-secondary" title="Copiar link">
                 {copied ? <Check size={16} /> : <Copy size={16} />}
               </button>
             </div>
@@ -455,11 +426,7 @@ export function AlbumDetailPage() {
       </Modal>
 
       {/* Edit Album Modal */}
-      <Modal
-        open={showEdit}
-        onClose={() => setShowEdit(false)}
-        title="Editar álbum"
-      >
+      <Modal open={showEdit} onClose={() => setShowEdit(false)} title="Editar álbum">
         <AlbumForm
           defaultValues={{
             title: album.title,

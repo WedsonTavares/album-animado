@@ -41,7 +41,7 @@ export function PhotoTable({ photos, onSelect, onDelete }: Props) {
             {photos.map((photo) => (
               <tr key={photo.id} className="hover:bg-card-hover/30 transition-colors">
                 <td className="px-4 py-3">
-                  <div 
+                  <div
                     className="w-12 h-12 rounded-lg overflow-hidden bg-card-hover cursor-pointer"
                     onClick={() => onSelect(photo)}
                   >
