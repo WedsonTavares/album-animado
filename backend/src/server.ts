@@ -34,8 +34,38 @@ app.get("/health", (_req, res) => {
 app.get(
   "/health/db",
   asyncHandler(async (_req, res) => {
-    await prisma.$queryRaw`SELECT 1`;
-    res.json({ status: "ok" });
+    const databaseUrl = process.env.DATABASE_URL;
+    let dbHost: string | undefined;
+    let sslMode: string | undefined;
+
+    if (databaseUrl) {
+      try {
+        const parsed = new URL(databaseUrl);
+        dbHost = parsed.hostname || undefined;
+        sslMode = parsed.searchParams.get("sslmode") || undefined;
+      } catch {
+        // ignore parsing errors; not all DATABASE_URL values are URL-parseable
+      }
+    }
+
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      return res.json({ status: "ok" });
+    } catch (err) {
+      console.error("DB healthcheck failed", {
+        dbHost,
+        sslMode,
+        hasDatabaseUrl: Boolean(databaseUrl),
+      });
+
+      return res.status(500).json({
+        status: "error",
+        message: "db_unreachable",
+        dbHost,
+        sslMode,
+        hasDatabaseUrl: Boolean(databaseUrl),
+      });
+    }
   }),
 );
 
