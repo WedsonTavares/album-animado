@@ -10,7 +10,7 @@
     "prisma:push": "prisma db push",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "lint": "echo \"Add linter if needed\""
+    "lint": "echo \"Add linter if needed\"" 
   },
   "keywords": [],
   "author": "",
