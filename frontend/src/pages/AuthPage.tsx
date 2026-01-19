@@ -240,14 +240,14 @@ export function AuthPage({ mode }: Props) {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-border"></div>
               </div>
-              <div className="relative flex justify-center text-xs sm:text-sm">
-                <span className="px-3 sm:px-4 bg-card text-muted-foreground">ou continue com</span>
-              </div>
             </div>
 
             {/* Social Login */}
             <div className="space-y-4">
-              <GoogleLoginButton />
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-xs sm:text-sm text-muted-foreground">ou continue com</span>
+                <GoogleLoginButton iconOnly />
+              </div>
               
               {/* Switch Mode */}
               <div className="text-center text-xs sm:text-sm">
