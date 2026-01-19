@@ -100,7 +100,6 @@ export function AuthPage({ mode }: Props) {
   };
 
   const heading = isLogin ? "Bem-vindo de volta" : "Crie sua conta";
-  const subheading = "";
 
   return (
     <ClickSpark sparkColor="#8b5cf6" sparkCount={12} sparkRadius={20}>
