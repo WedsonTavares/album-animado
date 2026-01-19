@@ -100,9 +100,7 @@ export function AuthPage({ mode }: Props) {
   };
 
   const heading = isLogin ? "Bem-vindo de volta" : "Crie sua conta";
-  const subheading = isLogin
-    ? "Acesse seus álbuns e continue organizando seus momentos favoritos."
-    : "Centralize e compartilhe suas fotos com quem importa.";
+  const subheading = "";
 
   return (
     <ClickSpark sparkColor="#8b5cf6" sparkCount={12} sparkRadius={20}>
@@ -118,29 +116,28 @@ export function AuthPage({ mode }: Props) {
       </Link>
 
       {/* Main Content - Centered */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="w-full max-w-md">
-          <div className="card glass">
+          <div className="card glass p-6 sm:p-8">
             {/* Header */}
-            <div className="text-center mb-6 sm:mb-8">
-              <Link to="/" className="inline-flex flex-col items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div className="text-center mb-5 sm:mb-6">
+              <Link to="/" className="inline-flex flex-col items-center gap-2 mb-4 sm:mb-5">
                 <img
                   src="/logo.png"
                   alt="Dr. TIS"
-                  className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl"
+                  className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl"
                 />
                 <GradientText className="text-xl sm:text-2xl font-bold">
                   Dr. TIS
                 </GradientText>
               </Link>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{heading}</h1>
-              <p className="text-sm sm:text-base text-muted-foreground px-4">{subheading}</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">{heading}</h1>
             </div>
 
             {/* Form Content */}
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-4 sm:space-y-5">
               {isLogin ? (
-                <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+                <form className="space-y-4 sm:space-y-5" onSubmit={handleSubmit(onSubmit)}>
                   <Input
                     label="E-mail"
                     type="email"
@@ -166,7 +163,7 @@ export function AuthPage({ mode }: Props) {
 
                   <button
                     type="submit"
-                    className="btn btn-primary w-full"
+                    className="btn btn-primary w-full py-2.5 sm:py-3"
                     disabled={mutation.isPending}
                   >
                     {mutation.isPending ? "Entrando..." : "Entrar na conta"}
@@ -183,8 +180,7 @@ export function AuthPage({ mode }: Props) {
                   >
                     <Step>
                       <div className="py-4">
-                        <h3 className="text-lg font-semibold text-foreground mb-1">Como podemos te chamar?</h3>
-                        <p className="text-muted-foreground text-sm mb-4">Esse nome aparecerá nos seus álbuns compartilhados.</p>
+                        <h3 className="text-lg font-semibold text-foreground mb-4">Como podemos te chamar?</h3>
                         <Input
                           label="Nome completo"
                           placeholder="Digite seu nome"
@@ -241,29 +237,31 @@ export function AuthPage({ mode }: Props) {
             </div>
 
             {/* Divider */}
-            <div className="relative my-6">
+            <div className="relative my-5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-border"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-card text-muted-foreground">ou continue com</span>
+              <div className="relative flex justify-center text-xs sm:text-sm">
+                <span className="px-3 sm:px-4 bg-card text-muted-foreground">ou continue com</span>
               </div>
             </div>
 
             {/* Social Login */}
-            <GoogleLoginButton />
-
-            {/* Switch Mode */}
-            <div className="text-center mt-6 text-sm">
-              <span className="text-muted-foreground">
-                {isLogin ? "Ainda não tem conta? " : "Já tem uma conta? "}
-              </span>
-              <Link 
-                to={isLogin ? "/register" : "/login"} 
-                className="text-primary hover:text-primary-hover font-medium transition-colors"
-              >
-                {isLogin ? "Criar conta grátis" : "Fazer login"}
-              </Link>
+            <div className="space-y-4">
+              <GoogleLoginButton />
+              
+              {/* Switch Mode */}
+              <div className="text-center text-xs sm:text-sm">
+                <span className="text-muted-foreground">
+                  {isLogin ? "Ainda não tem conta? " : "Já tem uma conta? "}
+                </span>
+                <Link 
+                  to={isLogin ? "/register" : "/login"} 
+                  className="text-primary hover:text-primary-hover font-medium transition-colors"
+                >
+                  {isLogin ? "Criar conta grátis" : "Fazer login"}
+                </Link>
+              </div>
             </div>
           </div>
         </div>

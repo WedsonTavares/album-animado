@@ -308,11 +308,13 @@ export function AlbumDetailPage() {
 
       {/* View Toggle & Sort */}
       {photoCount > 0 && (
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <SortSelect value={sortOrder} onChange={handleSortChange} />
-          <div className="flex items-center gap-2">
-            <span className="hidden sm:inline text-sm text-muted-foreground">Visualização:</span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 order-2 sm:order-1">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">Visualização:</span>
             <ViewToggle value={view} onChange={setView} />
+          </div>
+          <div className="order-1 sm:order-2">
+            <SortSelect value={sortOrder} onChange={handleSortChange} />
           </div>
         </div>
       )}
