@@ -311,7 +311,7 @@ export function AlbumDetailPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <SortSelect value={sortOrder} onChange={handleSortChange} />
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Visualização:</span>
+            <span className="hidden sm:inline text-sm text-muted-foreground">Visualização:</span>
             <ViewToggle value={view} onChange={setView} />
           </div>
         </div>
