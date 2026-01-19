@@ -3,16 +3,9 @@ dist
 **/*.log
 .env
 .DS_Store
+Ambiente.txt
 
 # Frontend
 frontend/node_modules
 frontend/dist
-
-# Backend
-backend/node_modules
-backend/dist
-backend/dev.db
-backend/prisma/dev.db
-backend/uploads
-backend/.env
-backend/supabase/.temp/
+frontend/.env

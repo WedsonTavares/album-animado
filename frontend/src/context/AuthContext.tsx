@@ -2,64 +2,78 @@ import {
   ReactNode,
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
-import { AuthResponse } from "../services/auth";
 import { User } from "../types";
+import { supabase } from "../lib/supabase";
+import type { Session } from "@supabase/supabase-js";
 
 interface AuthContextProps {
   user?: User;
-  token?: string;
+  session?: Session | null;
   isAuthenticated: boolean;
-  setSession: (payload: AuthResponse) => void;
-  logout: () => void;
+  isLoading: boolean;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
-const TOKEN_KEY = "dtrtis_token";
-const USER_KEY = "dtrtis_user";
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | undefined>(() => {
-    return localStorage.getItem(TOKEN_KEY) || undefined;
-  });
-  const [user, setUser] = useState<User | undefined>(() => {
-    const storedUser = localStorage.getItem(USER_KEY);
-    if (!storedUser) return undefined;
-    try {
-      return JSON.parse(storedUser) as User;
-    } catch (err) {
-      console.error("Erro ao ler usuário do storage", err);
-      localStorage.removeItem(USER_KEY);
-      return undefined;
-    }
-  });
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const setSession = (payload: AuthResponse) => {
-    setToken(payload.token);
-    setUser(payload.user);
-    localStorage.setItem(TOKEN_KEY, payload.token);
-    localStorage.setItem(USER_KEY, JSON.stringify(payload.user));
-  };
+  useEffect(() => {
+    // Obter sessão inicial
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || "",
+          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
+        });
+      }
+      setIsLoading(false);
+    });
 
-  const logout = () => {
-    setToken(undefined);
+    // Escutar mudanças na autenticação
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || "",
+          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
+        });
+      } else {
+        setUser(undefined);
+      }
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
     setUser(undefined);
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
   };
 
   const value = useMemo(
     () => ({
       user,
-      token,
-      isAuthenticated: Boolean(token),
-      setSession,
+      session,
+      isAuthenticated: Boolean(session),
+      isLoading,
       logout,
     }),
-    [user, token],
+    [user, session, isLoading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

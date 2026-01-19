@@ -25,7 +25,7 @@ export function AlbumTable({ albums, onDelete }: Props) {
           <tbody>
             {albums.map((album) => {
               const cover = album.photos?.[0];
-              const photoCount = album._count?.photos ?? album.photos?.length ?? 0;
+              const photoCount = album.photo_count ?? album.photos?.length ?? 0;
               const canDelete = photoCount === 0;
 
               return (
@@ -34,7 +34,7 @@ export function AlbumTable({ albums, onDelete }: Props) {
                     <div className="w-12 h-12 rounded-lg bg-card-hover overflow-hidden flex items-center justify-center">
                       {cover ? (
                         <img
-                          src={assetUrl(cover.filePath)}
+                          src={assetUrl(cover.file_path)}
                           alt={album.title}
                           className="w-full h-full object-cover"
                         />

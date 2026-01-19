@@ -52,7 +52,7 @@ const ITEMS_PER_PAGE = 12;
 export function AlbumDetailPage() {
   const params = useParams();
   const navigate = useNavigate();
-  const albumId = Number(params.id);
+  const albumId = params.id as string;
   const queryClient = useQueryClient();
   const [view, setView] = useState<ViewMode>("grid");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
@@ -92,7 +92,7 @@ export function AlbumDetailPage() {
   });
 
   const deletePhotoMutation = useMutation({
-    mutationFn: (photoId: number) => deletePhoto(photoId),
+    mutationFn: (photoId: string) => deletePhoto(photoId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["album", albumId, sortOrder] });
       queryClient.invalidateQueries({ queryKey: ["albums"] });
@@ -133,8 +133,8 @@ export function AlbumDetailPage() {
     setSelectedFiles((prev) => [...prev, ...files]);
   };
 
-  const shareUrl = album?.shareToken
-    ? `${window.location.origin}/public/album/${album.shareToken}`
+  const shareUrl = album?.share_token
+    ? `${window.location.origin}/public/album/${album.share_token}`
     : null;
 
   const copyShareLink = () => {
@@ -245,7 +245,7 @@ export function AlbumDetailPage() {
             {photoCount} {photoCount === 1 ? "foto" : "fotos"}
           </span>
           <StarBorder as="button" onClick={() => setShowShare(true)}>
-            <Share2 size={16} /> {album.isPublic ? "Compartilhado" : "Compartilhar"}
+            <Share2 size={16} /> {album.is_public ? "Compartilhado" : "Compartilhar"}
           </StarBorder>
           <StarBorder as="button" onClick={() => setShowEdit(true)}>
             <Edit3 size={16} /> Editar
@@ -390,12 +390,12 @@ export function AlbumDetailPage() {
       <Modal open={showShare} onClose={() => setShowShare(false)} title="Compartilhar álbum">
         <div className="space-y-6">
           <p className="text-muted-foreground">
-            {album.isPublic
+            {album.is_public
               ? "Este álbum está público. Qualquer pessoa com o link pode visualizá-lo."
               : "Torne este álbum público para compartilhar com outras pessoas."}
           </p>
 
-          {album.isPublic && shareUrl && (
+          {album.is_public && shareUrl && (
             <div className="flex items-center gap-2">
               <div className="flex-1 p-3 bg-card-hover rounded-lg border border-border text-sm text-foreground truncate">
                 {shareUrl}
@@ -412,12 +412,12 @@ export function AlbumDetailPage() {
             </StarBorder>
             <button
               onClick={() => shareMutation.mutate()}
-              className={`btn ${album.isPublic ? "btn-danger" : "btn-primary"}`}
+              className={`btn ${album.is_public ? "btn-danger" : "btn-primary"}`}
               disabled={shareMutation.isPending}
             >
               {shareMutation.isPending
                 ? "Processando..."
-                : album.isPublic
+                : album.is_public
                 ? "Tornar privado"
                 : "Tornar público"}
             </button>

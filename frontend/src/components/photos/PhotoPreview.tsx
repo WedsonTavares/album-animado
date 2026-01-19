@@ -17,7 +17,7 @@ export function PhotoPreview({ photo, onClose }: Props) {
         {/* Image */}
         <div className="rounded-xl overflow-hidden bg-card-hover">
           <img
-            src={assetUrl(photo.filePath)}
+            src={assetUrl(photo.file_path)}
             alt={photo.title}
             className="w-full h-auto max-h-[60vh] object-contain mx-auto"
           />
@@ -36,7 +36,7 @@ export function PhotoPreview({ photo, onClose }: Props) {
             </div>
             <div>
               <span className="block text-xs text-muted-foreground">Data</span>
-              <span className="text-sm font-medium text-foreground">{formatDate(photo.acquisitionDate)}</span>
+              <span className="text-sm font-medium text-foreground">{formatDate(photo.acquisition_date)}</span>
             </div>
           </div>
 
@@ -46,7 +46,7 @@ export function PhotoPreview({ photo, onClose }: Props) {
             </div>
             <div>
               <span className="block text-xs text-muted-foreground">Tamanho</span>
-              <span className="text-sm font-medium text-foreground">{formatBytes(photo.sizeBytes)}</span>
+              <span className="text-sm font-medium text-foreground">{formatBytes(photo.size_bytes)}</span>
             </div>
           </div>
 
@@ -57,13 +57,13 @@ export function PhotoPreview({ photo, onClose }: Props) {
             <div>
               <span className="block text-xs text-muted-foreground">Cor</span>
               <span className="text-sm font-medium text-foreground">
-                {photo.predominantColor ? (
+                {photo.predominant_color ? (
                   <span className="flex items-center gap-2">
                     <span
                       className="w-4 h-4 rounded-full border border-border"
-                      style={{ background: photo.predominantColor }}
+                      style={{ background: photo.predominant_color }}
                     />
-                    {photo.predominantColor}
+                    {photo.predominant_color}
                   </span>
                 ) : (
                   "N/A"

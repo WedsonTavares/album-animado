@@ -33,7 +33,7 @@ export function PhotoGrid({ photos, onSelect, onDelete }: Props) {
             onClick={() => onSelect(photo)}
           >
             <img
-              src={assetUrl(photo.filePath)}
+              src={assetUrl(photo.file_path)}
               alt={photo.title}
               loading="lazy"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -44,11 +44,11 @@ export function PhotoGrid({ photos, onSelect, onDelete }: Props) {
                 <span className="text-sm mt-1">Visualizar</span>
               </div>
             </div>
-            {photo.predominantColor && (
+            {photo.predominant_color && (
               <div
                 className="absolute bottom-2 left-2 w-6 h-6 rounded-full border-2 border-white shadow-lg"
-                style={{ background: photo.predominantColor }}
-                title={photo.predominantColor}
+                style={{ background: photo.predominant_color }}
+                title={photo.predominant_color}
               />
             )}
           </div>
@@ -62,9 +62,9 @@ export function PhotoGrid({ photos, onSelect, onDelete }: Props) {
             <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Calendar size={12} />
-                {formatDate(photo.acquisitionDate)}
+                {formatDate(photo.acquisition_date)}
               </span>
-              <span>{formatBytes(photo.sizeBytes)}</span>
+              <span>{formatBytes(photo.size_bytes)}</span>
             </div>
           </div>
 

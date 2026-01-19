@@ -1,33 +1,33 @@
 export interface User {
-  id: number;
+  id: string;
   email: string;
   name?: string | null;
 }
 
 export interface Photo {
-  id: number;
+  id: string;
   title: string;
   description?: string | null;
-  fileName: string;
-  filePath: string;
-  sizeBytes: number;
-  acquisitionDate: string;
-  predominantColor?: string | null;
-  albumId: number;
-  createdAt: string;
+  file_name: string;
+  file_path: string;
+  size_bytes: number;
+  acquisition_date: string;
+  predominant_color?: string | null;
+  album_id: string;
+  created_at: string;
 }
 
 export interface Album {
-  id: number;
+  id: string;
   title: string;
   description: string;
-  userId?: number;
-  isPublic?: boolean;
-  shareToken?: string | null;
-  createdAt: string;
-  updatedAt: string;
+  user_id?: string;
+  is_public?: boolean;
+  share_token?: string | null;
+  created_at: string;
+  updated_at: string;
   photos?: Photo[];
-  _count?: { photos: number };
+  photo_count?: number;
 }
 
 export type ViewMode = "grid" | "table";

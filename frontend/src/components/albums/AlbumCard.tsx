@@ -10,7 +10,7 @@ interface Props {
 
 export function AlbumCard({ album, onDelete }: Props) {
   const cover = album.photos?.[0];
-  const photoCount = album._count?.photos ?? album.photos?.length ?? 0;
+  const photoCount = album.photo_count ?? album.photos?.length ?? 0;
   const canDelete = photoCount === 0;
 
   return (
@@ -22,7 +22,7 @@ export function AlbumCard({ album, onDelete }: Props) {
       <div className="relative aspect-4/3 bg-card-hover overflow-hidden">
         {cover ? (
           <img
-            src={assetUrl(cover.filePath)}
+            src={assetUrl(cover.file_path)}
             alt={cover.title || album.title}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

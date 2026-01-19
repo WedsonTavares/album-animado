@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, Location, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -30,12 +30,20 @@ export function AuthPage({ mode }: Props) {
   const isLogin = mode === "login";
   const navigate = useNavigate();
   const location = useLocation();
-  const { setSession } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   const [stepperName, setStepperName] = useState("");
   const [stepperEmail, setStepperEmail] = useState("");
   const [stepperPassword, setStepperPassword] = useState("");
   const [stepperError, setStepperError] = useState<string | null>(null);
+
+  // Redirecionar se já estiver autenticado
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      const redirect = (location.state as { from?: Location })?.from?.pathname;
+      navigate(redirect || "/albums", { replace: true });
+    }
+  }, [isAuthenticated, isLoading, navigate, location.state]);
 
   const {
     register,
@@ -46,17 +54,21 @@ export function AuthPage({ mode }: Props) {
   });
 
   const mutation = useMutation({
-    mutationFn: async (data: FormValues) => (isLogin ? login(data) : registerUser(data)),
-    onSuccess: (data) => {
-      setSession(data);
+    mutationFn: async (data: FormValues) => {
+      if (isLogin) {
+        return login(data.email, data.password);
+      } else {
+        return registerUser(data.email, data.password, data.name);
+      }
+    },
+    onSuccess: () => {
+      // O AuthContext vai detectar a mudança de sessão automaticamente
       const redirect = (location.state as { from?: Location })?.from?.pathname;
       navigate(redirect || "/albums");
     },
     onError: (error: unknown) => {
-      const axiosError = error as { response?: { data?: { message?: string } }; message?: string };
-      const message = axiosError.response?.data?.message 
-        || axiosError.message 
-        || (isLogin ? "Não foi possível fazer login. Tente novamente." : "Não foi possível criar a conta. Tente novamente.");
+      const err = error as { message?: string };
+      const message = err.message || (isLogin ? "Não foi possível fazer login. Tente novamente." : "Não foi possível criar a conta. Tente novamente.");
       setStepperError(message);
     },
   });

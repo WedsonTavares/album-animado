@@ -28,14 +28,14 @@ export function AlbumListPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => deleteAlbum(id),
+    mutationFn: (id: string) => deleteAlbum(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["albums"] });
     },
   });
 
   const handleDelete = (album: Album) => {
-    const photoCount = album._count?.photos ?? album.photos?.length ?? 0;
+    const photoCount = album.photo_count ?? album.photos?.length ?? 0;
     if (photoCount > 0) {
       alert("Não é possível excluir um álbum que contém fotos.");
       return;

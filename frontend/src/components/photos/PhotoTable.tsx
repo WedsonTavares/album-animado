@@ -46,7 +46,7 @@ export function PhotoTable({ photos, onSelect, onDelete }: Props) {
                     onClick={() => onSelect(photo)}
                   >
                     <img
-                      src={assetUrl(photo.filePath)}
+                      src={assetUrl(photo.file_path)}
                       alt={photo.title}
                       className="w-full h-full object-cover"
                     />
@@ -58,16 +58,16 @@ export function PhotoTable({ photos, onSelect, onDelete }: Props) {
                     {photo.description || "Sem descrição"}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">{formatBytes(photo.sizeBytes)}</td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(photo.acquisitionDate)}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{formatBytes(photo.size_bytes)}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(photo.acquisition_date)}</td>
                 <td className="px-4 py-3">
-                  {photo.predominantColor ? (
+                  {photo.predominant_color ? (
                     <div className="flex items-center gap-2">
                       <span
                         className="w-4 h-4 rounded-full border border-border"
-                        style={{ background: photo.predominantColor }}
+                        style={{ background: photo.predominant_color }}
                       />
-                      <span className="text-sm text-muted-foreground">{photo.predominantColor}</span>
+                      <span className="text-sm text-muted-foreground">{photo.predominant_color}</span>
                     </div>
                   ) : (
                     <span className="text-sm text-muted">-</span>
