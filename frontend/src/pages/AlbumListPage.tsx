@@ -58,14 +58,14 @@ export function AlbumListPage() {
     <div className="space-y-6 sm:space-y-8">
       {/* Summary Header */}
       <div className="card space-y-4 sm:space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-1">Meus Álbuns de Fotos</h1>
             <p className="text-sm sm:text-base text-muted-foreground">
               Organize suas memórias em álbuns, adicione fotos e compartilhe com quem você ama.
             </p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
             <ViewToggle value={viewMode} onChange={setViewMode} />
             <button onClick={() => setOpen(true)} className="btn btn-primary text-sm sm:text-base flex-shrink-0">
               <Plus size={16} /> <span className="hidden sm:inline">Criar novo álbum</span><span className="sm:hidden">Novo</span>

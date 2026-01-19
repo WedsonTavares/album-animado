@@ -7,7 +7,7 @@ interface Props {
   label?: string;
 }
 
-export function SortSelect({ value, onChange, label = "Data de aquisição" }: Props) {
+export function SortSelect({ value, onChange, label = "Ordenar" }: Props) {
   return (
     <div className="inline-flex items-center gap-2">
       <span className="text-sm text-muted-foreground">{label}:</span>

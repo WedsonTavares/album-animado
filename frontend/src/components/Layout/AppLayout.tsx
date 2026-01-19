@@ -58,15 +58,15 @@ export function AppLayout() {
       <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur-xl">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/albums" className="flex items-center gap-3">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <Link to="/albums" className="flex items-center gap-2 sm:gap-3">
             <img
               src="/logo.png"
               alt="Dr. TIS"
-              className="h-14 w-14 rounded-xl"
+              className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-xl"
             />
             <div className="hidden sm:block">
-              <GradientText className="font-bold text-2xl">
+              <GradientText className="font-bold text-xl sm:text-2xl">
                 Dr. TIS
               </GradientText>
             </div>
@@ -77,24 +77,24 @@ export function AppLayout() {
               <button
                 type="button"
                 onClick={() => setIsUserMenuOpen((open) => !open)}
-                className="flex items-center gap-3 rounded-xl px-2 py-1.5 text-left hover:bg-card/80 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="flex items-center gap-2 sm:gap-3 rounded-xl px-2 py-1.5 text-left hover:bg-card/80 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
               >
-                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary/10 flex items-center justify-center text-xs sm:text-sm font-semibold text-primary">
                   {getInitials(user.name, user.email)}
                 </div>
-                <span className="hidden sm:block text-sm text-foreground">
+                <span className="hidden md:block text-sm text-foreground max-w-[150px] truncate">
                   {user.name || user.email}
                 </span>
               </button>
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-xl shadow-lg shadow-black/10">
+                <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-xl shadow-lg shadow-black/10 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => {
                       setIsUserMenuOpen(false);
                       handleLogout();
                     }}
-                    className="flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-sm text-destructive hover:bg-destructive/10 focus:outline-none focus:ring-2 focus:ring-destructive/30"
+                    className="flex w-full items-center gap-2 px-4 py-3 text-sm text-destructive hover:bg-destructive/10 focus:outline-none focus:ring-2 focus:ring-destructive/30 transition-colors"
                   >
                     <LogOut size={16} />
                     <span>Sair</span>

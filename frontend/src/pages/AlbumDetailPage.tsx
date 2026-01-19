@@ -254,7 +254,7 @@ export function AlbumDetailPage() {
       </Link>
 
       {/* Album Header */}
-      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 sm:gap-6">
+      <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2">{album.title}</h1>
           {album.description && (
@@ -262,34 +262,56 @@ export function AlbumDetailPage() {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-primary/10 text-xs sm:text-sm text-primary whitespace-nowrap">
-            <Image size={14} />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-sm text-primary whitespace-nowrap w-fit">
+            <Image size={16} />
             {photoCount} {photoCount === 1 ? "foto" : "fotos"}
           </span>
-          <StarBorder as="button" onClick={() => setShowShare(true)} className="text-xs sm:text-sm">
-            <Share2 size={14} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">{album.is_public ? "Compartilhado" : "Compartilhar"}</span><span className="sm:hidden">{album.is_public ? "Compart." : "Compart."}</span>
-          </StarBorder>
-          <StarBorder as="button" onClick={() => setShowEdit(true)} className="text-xs sm:text-sm">
-            <Edit3 size={14} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Editar</span>
-          </StarBorder>
-          <button onClick={() => setShowUpload(true)} className="btn btn-primary text-xs sm:text-sm px-3 sm:px-4">
-            <ImagePlus size={14} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Adicionar fotos</span><span className="sm:hidden">Adicionar</span>
-          </button>
-          {photoCount === 0 && (
-            <button onClick={handleDeleteAlbum} className="btn btn-danger text-xs sm:text-sm px-3 sm:px-4">
-              <Trash2 size={14} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Excluir</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <StarBorder 
+              as="button" 
+              onClick={() => setShowShare(true)} 
+              className="p-2.5"
+              title={album.is_public ? "Compartilhado" : "Compartilhar"}
+            >
+              <Share2 size={18} />
+            </StarBorder>
+            <StarBorder 
+              as="button" 
+              onClick={() => setShowEdit(true)} 
+              className="p-2.5"
+              title="Editar álbum"
+            >
+              <Edit3 size={18} />
+            </StarBorder>
+            <button 
+              onClick={() => setShowUpload(true)} 
+              className="btn btn-primary text-sm px-4 py-2 flex-1 sm:flex-initial min-w-0"
+            >
+              <ImagePlus size={16} /> 
+              <span className="hidden sm:inline">Adicionar fotos</span>
+              <span className="sm:hidden truncate">Adicionar</span>
             </button>
-          )}
+            {photoCount === 0 && (
+              <button 
+                onClick={handleDeleteAlbum} 
+                className="btn btn-danger text-sm px-4 py-2"
+              >
+                <Trash2 size={16} /> 
+                <span className="hidden sm:inline">Excluir</span>
+                <span className="sm:hidden">Excluir</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
       {/* View Toggle & Sort */}
       {photoCount > 0 && (
-        <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <SortSelect value={sortOrder} onChange={handleSortChange} />
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-xs sm:text-sm text-muted-foreground">Visualização:</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Visualização:</span>
             <ViewToggle value={view} onChange={setView} />
           </div>
         </div>
@@ -357,19 +379,12 @@ export function AlbumDetailPage() {
             Os campos abaixo são opcionais e serão aplicados a todas as fotos enviadas.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            <Input
-              label="Título"
-              placeholder="Nome das fotos"
-              hint="Se vazio, usa o nome do arquivo"
-              {...uploadForm.register("title")}
-            />
-            <Input
-              label="Data de aquisição"
-              type="datetime-local"
-              {...uploadForm.register("acquisitionDate")}
-            />
-          </div>
+          <Input
+            label="Título"
+            placeholder="Nome das fotos"
+            hint="Se vazio, usa o nome do arquivo"
+            {...uploadForm.register("title")}
+          />
 
           <Textarea
             label="Descrição"
