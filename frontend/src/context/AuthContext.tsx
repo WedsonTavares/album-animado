@@ -39,7 +39,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     });
 
-    // Escutar mudanças na autenticação
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {

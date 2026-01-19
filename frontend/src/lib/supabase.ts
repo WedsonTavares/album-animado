@@ -9,7 +9,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-// Tipos do banco de dados
 export interface DbAlbum {
   id: string;
   title: string;
