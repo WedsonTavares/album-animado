@@ -211,10 +211,10 @@ export function AlbumDetailPage() {
   // Pagination
   const totalPages = Math.ceil(photoCount / ITEMS_PER_PAGE);
   const paginatedPhotos = useMemo(() => {
-    const photos = album.photos || [];
+    if (!album?.photos) return [];
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return photos.slice(start, start + ITEMS_PER_PAGE);
-  }, [album.photos, currentPage]);
+    return album.photos.slice(start, start + ITEMS_PER_PAGE);
+  }, [album?.photos, currentPage]);
 
   // Reset to page 1 when sort changes
   const handleSortChange = (order: SortOrder) => {
