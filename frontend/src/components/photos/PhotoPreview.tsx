@@ -13,57 +13,57 @@ export function PhotoPreview({ photo, onClose }: Props) {
 
   return (
     <Modal open={Boolean(photo)} onClose={onClose} title={photo.title} size="large">
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* Image */}
-        <div className="rounded-xl overflow-hidden bg-card-hover">
+        <div className="rounded-lg sm:rounded-xl overflow-hidden bg-card-hover">
           <img
             src={assetUrl(photo.file_path)}
             alt={photo.title}
-            className="w-full h-auto max-h-[60vh] object-contain mx-auto"
+            className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] object-contain mx-auto"
           />
         </div>
         
         {/* Description */}
         {photo.description && (
-          <p className="text-muted-foreground">{photo.description}</p>
+          <p className="text-sm sm:text-base text-muted-foreground">{photo.description}</p>
         )}
 
         {/* Metadata */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-card-hover/50">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Calendar size={18} className="text-primary" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-card-hover/50">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Calendar size={16} className="sm:w-[18px] sm:h-[18px] text-primary" />
             </div>
-            <div>
+            <div className="min-w-0">
               <span className="block text-xs text-muted-foreground">Data</span>
-              <span className="text-sm font-medium text-foreground">{formatDate(photo.acquisition_date)}</span>
+              <span className="text-xs sm:text-sm font-medium text-foreground truncate">{formatDate(photo.acquisition_date)}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-card-hover/50">
-            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-              <HardDrive size={18} className="text-accent" />
+          <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-card-hover/50">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+              <HardDrive size={16} className="sm:w-[18px] sm:h-[18px] text-accent" />
             </div>
-            <div>
+            <div className="min-w-0">
               <span className="block text-xs text-muted-foreground">Tamanho</span>
-              <span className="text-sm font-medium text-foreground">{formatBytes(photo.size_bytes)}</span>
+              <span className="text-xs sm:text-sm font-medium text-foreground truncate">{formatBytes(photo.size_bytes)}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-card-hover/50">
-            <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
-              <Palette size={18} className="text-success" />
+          <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-card-hover/50">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+              <Palette size={16} className="sm:w-[18px] sm:h-[18px] text-success" />
             </div>
-            <div>
+            <div className="min-w-0">
               <span className="block text-xs text-muted-foreground">Cor</span>
-              <span className="text-sm font-medium text-foreground">
+              <span className="text-xs sm:text-sm font-medium text-foreground">
                 {photo.predominant_color ? (
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-1.5 sm:gap-2">
                     <span
-                      className="w-4 h-4 rounded-full border border-border"
+                      className="w-3 h-3 sm:w-4 sm:h-4 rounded-full border border-border flex-shrink-0"
                       style={{ background: photo.predominant_color }}
                     />
-                    {photo.predominant_color}
+                    <span className="truncate">{photo.predominant_color}</span>
                   </span>
                 ) : (
                   "N/A"

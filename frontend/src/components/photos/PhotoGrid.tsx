@@ -24,7 +24,7 @@ export function PhotoGrid({ photos, onSelect, onDelete }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
       {photos.map((photo) => (
         <div key={photo.id} className="group card p-0 overflow-hidden">
           {/* Image */}
@@ -54,12 +54,12 @@ export function PhotoGrid({ photos, onSelect, onDelete }: Props) {
           </div>
 
           {/* Body */}
-          <div className="p-3">
-            <h4 className="font-medium text-foreground truncate">{photo.title}</h4>
-            <p className="text-sm text-muted-foreground truncate">
+          <div className="p-2.5 sm:p-3">
+            <h4 className="font-medium text-sm sm:text-base text-foreground truncate">{photo.title}</h4>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">
               {photo.description || "Sem descrição"}
             </p>
-            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 sm:gap-3 mt-1.5 sm:mt-2 text-xs text-muted-foreground flex-wrap">
               <span className="flex items-center gap-1">
                 <Calendar size={12} />
                 {formatDate(photo.acquisition_date)}

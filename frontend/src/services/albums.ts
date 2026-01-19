@@ -23,9 +23,9 @@ export const fetchAlbums = async (): Promise<Album[]> => {
         .from("photos")
         .select("*")
         .eq("album_id", album.id)
-        .order("created_at", { ascending: false })
+        .order("created_at", { ascending: false})
         .limit(1)
-        .single();
+        .maybeSingle();
 
       return {
         ...album,

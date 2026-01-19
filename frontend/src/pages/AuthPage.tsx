@@ -110,34 +110,35 @@ export function AuthPage({ mode }: Props) {
       {/* Back to Home Link */}
       <Link 
         to="/" 
-        className="absolute top-6 left-6 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+        className="absolute top-4 sm:top-6 left-4 sm:left-6 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors z-10"
       >
-        <ArrowLeft size={18} />
-        <span>Voltar ao início</span>
+        <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
+        <span className="hidden sm:inline">Voltar ao início</span>
+        <span className="sm:hidden">Voltar</span>
       </Link>
 
       {/* Main Content - Centered */}
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
         <div className="w-full max-w-md">
           <div className="card glass">
             {/* Header */}
-            <div className="text-center mb-8">
-              <Link to="/" className="inline-flex flex-col items-center gap-3 mb-4">
+            <div className="text-center mb-6 sm:mb-8">
+              <Link to="/" className="inline-flex flex-col items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                 <img
                   src="/logo.png"
                   alt="Dr. TIS"
-                  className="h-16 w-16 rounded-xl"
+                  className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl"
                 />
-                <GradientText className="text-2xl font-bold">
+                <GradientText className="text-xl sm:text-2xl font-bold">
                   Dr. TIS
                 </GradientText>
               </Link>
-              <h1 className="text-2xl font-bold text-foreground mb-2">{heading}</h1>
-              <p className="text-muted-foreground">{subheading}</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{heading}</h1>
+              <p className="text-sm sm:text-base text-muted-foreground px-4">{subheading}</p>
             </div>
 
             {/* Form Content */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {isLogin ? (
                 <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                   <Input

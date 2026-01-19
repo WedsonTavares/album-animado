@@ -43,9 +43,9 @@ export function Pagination({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 py-3 sm:py-4">
       {totalItems !== undefined && itemsPerPage !== undefined && (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
           Mostrando {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} a{" "}
           {Math.min(currentPage * itemsPerPage, totalItems)} de {totalItems} itens
         </span>

@@ -223,39 +223,40 @@ export function AlbumDetailPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Breadcrumb / Navigation */}
-      <Link to="/albums" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft size={18} />
-        <span>Voltar aos álbuns</span>
+      <Link to="/albums" className="inline-flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors">
+        <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
+        <span className="hidden sm:inline">Voltar aos álbuns</span>
+        <span className="sm:hidden">Voltar</span>
       </Link>
 
       {/* Album Header */}
-      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 sm:gap-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{album.title}</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2">{album.title}</h1>
           {album.description && (
-            <p className="text-muted-foreground max-w-2xl">{album.description}</p>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">{album.description}</p>
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-sm text-primary whitespace-nowrap">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-primary/10 text-xs sm:text-sm text-primary whitespace-nowrap">
             <Image size={14} />
             {photoCount} {photoCount === 1 ? "foto" : "fotos"}
           </span>
-          <StarBorder as="button" onClick={() => setShowShare(true)}>
-            <Share2 size={16} /> {album.is_public ? "Compartilhado" : "Compartilhar"}
+          <StarBorder as="button" onClick={() => setShowShare(true)} className="text-xs sm:text-sm">
+            <Share2 size={14} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">{album.is_public ? "Compartilhado" : "Compartilhar"}</span><span className="sm:hidden">{album.is_public ? "Compart." : "Compart."}</span>
           </StarBorder>
-          <StarBorder as="button" onClick={() => setShowEdit(true)}>
-            <Edit3 size={16} /> Editar
+          <StarBorder as="button" onClick={() => setShowEdit(true)} className="text-xs sm:text-sm">
+            <Edit3 size={14} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Editar</span>
           </StarBorder>
-          <button onClick={() => setShowUpload(true)} className="btn btn-primary">
-            <ImagePlus size={16} /> Adicionar fotos
+          <button onClick={() => setShowUpload(true)} className="btn btn-primary text-xs sm:text-sm px-3 sm:px-4">
+            <ImagePlus size={14} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Adicionar fotos</span><span className="sm:hidden">Adicionar</span>
           </button>
           {photoCount === 0 && (
-            <button onClick={handleDeleteAlbum} className="btn btn-danger">
-              <Trash2 size={16} /> Excluir
+            <button onClick={handleDeleteAlbum} className="btn btn-danger text-xs sm:text-sm px-3 sm:px-4">
+              <Trash2 size={14} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Excluir</span>
             </button>
           )}
         </div>
@@ -263,10 +264,10 @@ export function AlbumDetailPage() {
 
       {/* View Toggle & Sort */}
       {photoCount > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-4">
           <SortSelect value={sortOrder} onChange={handleSortChange} />
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">Visualização:</span>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-xs sm:text-sm text-muted-foreground">Visualização:</span>
             <ViewToggle value={view} onChange={setView} />
           </div>
         </div>
