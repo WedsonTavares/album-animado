@@ -9,10 +9,15 @@ import { ViewToggle } from "../components/ViewToggle";
 import { Modal } from "../components/ui/Modal";
 import { AlbumForm, AlbumFormValues } from "../components/albums/AlbumForm";
 import StarBorder from "../components/ui/StarBorder";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 
 export function AlbumListPage() {
   const [open, setOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; album: Album | null }>({
+    open: false,
+    album: null,
+  });
   const queryClient = useQueryClient();
   const { data: albums = [], isLoading } = useQuery<Album[]>({
     queryKey: ["albums"],
@@ -31,17 +36,21 @@ export function AlbumListPage() {
     mutationFn: (id: string) => deleteAlbum(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["albums"] });
+      setDeleteConfirm({ open: false, album: null });
     },
   });
 
   const handleDelete = (album: Album) => {
-    const photoCount = album.photo_count ?? album.photos?.length ?? 0;
-    if (photoCount > 0) {
-      alert("Não é possível excluir um álbum que contém fotos.");
+    if ((album.photo_count ?? 0) > 0) {
+      setDeleteConfirm({ open: true, album: null });
       return;
     }
-    if (confirm(`Deseja excluir o álbum "${album.title}"?`)) {
-      deleteMutation.mutate(album.id);
+    setDeleteConfirm({ open: true, album });
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm.album) {
+      deleteMutation.mutate(deleteConfirm.album.id);
     }
   };
 
@@ -112,6 +121,24 @@ export function AlbumListPage() {
           }}
         />
       </Modal>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteConfirm.open}
+        onClose={() => setDeleteConfirm({ open: false, album: null })}
+        onConfirm={confirmDelete}
+        title={
+          deleteConfirm.album ? "Excluir álbum?" : "Não é possível excluir"
+        }
+        message={
+          deleteConfirm.album
+            ? `Tem certeza que deseja excluir o álbum "${deleteConfirm.album.title}"? Esta ação não pode ser desfeita.`
+            : "Não é possível excluir um álbum que contém fotos. Remova todas as fotos primeiro."
+        }
+        confirmText="Excluir"
+        variant={deleteConfirm.album ? "danger" : "warning"}
+        isLoading={deleteMutation.isPending}
+      />
     </div>
   );
 }

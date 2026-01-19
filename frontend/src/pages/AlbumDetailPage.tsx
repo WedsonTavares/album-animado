@@ -37,6 +37,7 @@ import { SortSelect } from "../components/ui/SortSelect";
 import { Pagination } from "../components/ui/Pagination";
 import { converterCor } from "../utils/cores";
 import StarBorder from "../components/ui/StarBorder";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 
 const uploadSchema = z.object({
   title: z.string().optional(),
@@ -63,6 +64,8 @@ export function AlbumDetailPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [copied, setCopied] = useState(false);
+  const [deleteAlbumConfirm, setDeleteAlbumConfirm] = useState(false);
+  const [deletePhotoConfirm, setDeletePhotoConfirm] = useState<Photo | null>(null);
 
   const {
     data: album,
@@ -158,18 +161,20 @@ export function AlbumDetailPage() {
   }
 
   const handleDeleteAlbum = () => {
-    if (
-      window.confirm(
-        "Deseja remover este álbum? Só é possível quando não há fotos dentro dele.",
-      )
-    ) {
-      deleteAlbumMutation.mutate();
-    }
+    setDeleteAlbumConfirm(true);
+  };
+
+  const confirmDeleteAlbum = () => {
+    deleteAlbumMutation.mutate();
   };
 
   const handleDeletePhoto = (photo: Photo) => {
-    if (window.confirm(`Excluir a foto "${photo.title}"?`)) {
-      deletePhotoMutation.mutate(photo.id);
+    setDeletePhotoConfirm(photo);
+  };
+
+  const confirmDeletePhoto = () => {
+    if (deletePhotoConfirm) {
+      deletePhotoMutation.mutate(deletePhotoConfirm.id);
     }
   };
 
@@ -439,6 +444,38 @@ export function AlbumDetailPage() {
           }}
         />
       </Modal>
+
+      {/* Delete Album Confirmation */}
+      <ConfirmDialog
+        open={deleteAlbumConfirm}
+        onClose={() => setDeleteAlbumConfirm(false)}
+        onConfirm={confirmDeleteAlbum}
+        title="Excluir álbum?"
+        message={
+          photoCount > 0
+            ? "Não é possível excluir um álbum que contém fotos. Remova todas as fotos primeiro."
+            : `Tem certeza que deseja excluir o álbum "${album.title}"? Esta ação não pode ser desfeita e todas as configurações de compartilhamento serão perdidas.`
+        }
+        confirmText="Excluir álbum"
+        variant={photoCount > 0 ? "warning" : "danger"}
+        isLoading={deleteAlbumMutation.isPending}
+      />
+
+      {/* Delete Photo Confirmation */}
+      <ConfirmDialog
+        open={!!deletePhotoConfirm}
+        onClose={() => setDeletePhotoConfirm(null)}
+        onConfirm={confirmDeletePhoto}
+        title="Excluir foto?"
+        message={
+          deletePhotoConfirm
+            ? `Tem certeza que deseja excluir a foto "${deletePhotoConfirm.title}"? Esta ação não pode ser desfeita.`
+            : ""
+        }
+        confirmText="Excluir foto"
+        variant="danger"
+        isLoading={deletePhotoMutation.isPending}
+      />
     </div>
   );
 }

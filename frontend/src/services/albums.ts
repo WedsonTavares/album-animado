@@ -16,7 +16,6 @@ export const fetchAlbums = async (): Promise<Album[]> => {
 
   if (error) throw error;
 
-  // Contar fotos e pegar primeira foto para thumbnail
   const albumsWithCount = await Promise.all(
     ((albums as (DbAlbum & { photos: { id: string }[] })[]) || []).map(async (album) => {
       const { data: firstPhoto } = await supabase

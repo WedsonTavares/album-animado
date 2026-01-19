@@ -83,43 +83,19 @@ export const coresPortugues: Record<string, string> = {
   'chumbo': '#71706E',
 };
 
-/**
- * Converte uma cor em português ou hexadecimal para código hex válido
- */
 export function converterCor(entrada: string): string {
   const entradaLimpa = entrada.trim().toLowerCase();
-  
-  // Se já é um código hex válido, retorna
+
   if (/^#[0-9A-Fa-f]{6}$/.test(entrada)) {
     return entrada;
   }
-  
-  // Se é hex sem #, adiciona
+
   if (/^[0-9A-Fa-f]{6}$/.test(entrada)) {
     return `#${entrada}`;
   }
-  
-  // Busca no mapeamento de cores em português
   const corHex = coresPortugues[entradaLimpa];
   if (corHex) {
     return corHex;
   }
-  
-  // Retorna a entrada original se não encontrar
   return entrada;
-}
-
-/**
- * Valida se uma string é uma cor válida (hex ou nome em português)
- */
-export function validarCor(entrada: string): boolean {
-  const entradaLimpa = entrada.trim().toLowerCase();
-  
-  // Verifica se é hex válido
-  if (/^#?[0-9A-Fa-f]{6}$/.test(entrada)) {
-    return true;
-  }
-  
-  // Verifica se está no mapeamento
-  return entradaLimpa in coresPortugues;
 }

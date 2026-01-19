@@ -17,6 +17,5 @@ export function formatBytes(bytes: number) {
 }
 
 export function assetUrl(path: string) {
-  // Todas as URLs agora vêm do Supabase Storage como URLs completas
   return path;
 }

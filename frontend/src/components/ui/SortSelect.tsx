@@ -1,6 +1,5 @@
 import { ArrowDownAZ, ArrowUpAZ } from "lucide-react";
-
-export type SortOrder = "asc" | "desc";
+import { SortOrder } from "../../types";
 
 interface Props {
   value: SortOrder;
