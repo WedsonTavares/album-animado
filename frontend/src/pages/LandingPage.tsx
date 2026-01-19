@@ -49,12 +49,13 @@ export function LandingPage() {
         </div>
 
         {/* Hero Visual - BounceCards */}
-        <div className="flex justify-center items-center py-6 sm:py-8 mb-6 sm:mb-10 overflow-hidden px-4">
-          <div className="max-w-full">
-            <BounceCards
-              images={cardImages}
-              containerWidth={600}
-              containerHeight={300}
+        <div className="flex justify-center items-center -mt-4 mb-6 sm:mb-10 overflow-hidden px-4">
+          <div className="w-full flex justify-center">
+            <div className="scale-[0.6] sm:scale-75 md:scale-90 lg:scale-100">
+              <BounceCards
+                images={cardImages}
+                containerWidth={600}
+                containerHeight={300}
               animationDelay={0.5}
               animationStagger={0.08}
               easeType="elastic.out(1, 0.8)"
@@ -62,6 +63,7 @@ export function LandingPage() {
               enableHover={true}
             />
           </div>
+        </div>
         </div>
       </section>
 

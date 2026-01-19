@@ -58,10 +58,12 @@ export function PublicAlbumPage() {
   const totalPages = Math.ceil(photoCount / ITEMS_PER_PAGE);
   
   const paginatedPhotos = useMemo(() => {
-    const photos = album.photos || [];
+    if (!album || !album.photos || album.photos.length === 0) {
+      return [];
+    }
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return photos.slice(start, start + ITEMS_PER_PAGE);
-  }, [album.photos, currentPage]);
+    return album.photos.slice(start, start + ITEMS_PER_PAGE);
+  }, [album, currentPage]);
 
   const handleSortChange = (order: SortOrder) => {
     setSortOrder(order);
