@@ -29,6 +29,38 @@ export function PublicAlbumPage() {
     enabled: Boolean(token),
   });
 
+  // ============================================
+  // 🔴 useMemo DEVE estar ANTES de qualquer return condicional
+  // ============================================
+  const photoCount = useMemo(() => {
+    return album?.photos?.length ?? 0;
+  }, [album?.photos]);
+
+  const totalPages = useMemo(() => {
+    return Math.ceil(photoCount / ITEMS_PER_PAGE);
+  }, [photoCount]);
+
+  const paginatedPhotos = useMemo(() => {
+    if (!album?.photos || album.photos.length === 0) {
+      return [];
+    }
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return album.photos.slice(start, start + ITEMS_PER_PAGE);
+  }, [album?.photos, currentPage]);
+
+  // ============================================
+  // 🟢 Funções auxiliares (não são hooks)
+  // ============================================
+  const handleSortChange = (order: SortOrder) => {
+    setSortOrder(order);
+    setCurrentPage(1);
+  };
+
+  // ============================================
+  // 🟢 AGORA SIM podemos ter returns condicionais
+  // 🟢 Todos os hooks já foram chamados acima
+  // ============================================
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8">
@@ -53,22 +85,6 @@ export function PublicAlbumPage() {
       </div>
     );
   }
-
-  const photoCount = album.photos?.length ?? 0;
-  const totalPages = Math.ceil(photoCount / ITEMS_PER_PAGE);
-  
-  const paginatedPhotos = useMemo(() => {
-    if (!album || !album.photos || album.photos.length === 0) {
-      return [];
-    }
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return album.photos.slice(start, start + ITEMS_PER_PAGE);
-  }, [album, currentPage]);
-
-  const handleSortChange = (order: SortOrder) => {
-    setSortOrder(order);
-    setCurrentPage(1);
-  };
 
   return (
     <div className="min-h-screen bg-background">

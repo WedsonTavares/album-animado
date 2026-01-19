@@ -132,13 +132,36 @@ export function AlbumDetailPage() {
     resolver: zodResolver(uploadSchema),
   });
 
+  // ============================================
+  // 🔴 useMemo DEVE estar ANTES de qualquer return condicional
+  // ============================================
+  const photoCount = useMemo(() => {
+    return album?.photos?.length ?? 0;
+  }, [album?.photos]);
+
+  const totalPages = useMemo(() => {
+    return Math.ceil(photoCount / ITEMS_PER_PAGE);
+  }, [photoCount]);
+
+  const paginatedPhotos = useMemo(() => {
+    if (!album?.photos || album.photos.length === 0) {
+      return [];
+    }
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return album.photos.slice(start, start + ITEMS_PER_PAGE);
+  }, [album?.photos, currentPage]);
+
+  const shareUrl = useMemo(() => {
+    if (!album?.share_token) return null;
+    return `${window.location.origin}/public/album/${album.share_token}`;
+  }, [album?.share_token]);
+
+  // ============================================
+  // 🟢 Funções auxiliares (não são hooks)
+  // ============================================
   const handleFilesSelected = (files: File[]) => {
     setSelectedFiles((prev) => [...prev, ...files]);
   };
-
-  const shareUrl = album?.share_token
-    ? `${window.location.origin}/public/album/${album.share_token}`
-    : null;
 
   const copyShareLink = () => {
     if (shareUrl) {
@@ -147,18 +170,6 @@ export function AlbumDetailPage() {
       setTimeout(() => setCopied(false), 2000);
     }
   };
-
-  if (!albumId) {
-    return (
-      <div className="card text-center py-16">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-          <FolderOpen size={28} className="text-primary" />
-        </div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">Álbum inválido</h3>
-        <p className="text-muted-foreground">Não foi possível identificar o álbum solicitado.</p>
-      </div>
-    );
-  }
 
   const handleDeleteAlbum = () => {
     setDeleteAlbumConfirm(true);
@@ -177,6 +188,28 @@ export function AlbumDetailPage() {
       deletePhotoMutation.mutate(deletePhotoConfirm.id);
     }
   };
+
+  const handleSortChange = (order: SortOrder) => {
+    setSortOrder(order);
+    setCurrentPage(1);
+  };
+
+  // ============================================
+  // 🟢 AGORA SIM podemos ter returns condicionais
+  // 🟢 Todos os hooks já foram chamados acima
+  // ============================================
+
+  if (!albumId) {
+    return (
+      <div className="card text-center py-16">
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+          <FolderOpen size={28} className="text-primary" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">Álbum inválido</h3>
+        <p className="text-muted-foreground">Não foi possível identificar o álbum solicitado.</p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -210,24 +243,6 @@ export function AlbumDetailPage() {
       </div>
     );
   }
-
-  const photoCount = album.photos?.length ?? 0;
-
-  // Pagination
-  const totalPages = Math.ceil(photoCount / ITEMS_PER_PAGE);
-  const paginatedPhotos = useMemo(() => {
-    if (!album || !album.photos || album.photos.length === 0) {
-      return [];
-    }
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return album.photos.slice(start, start + ITEMS_PER_PAGE);
-  }, [album, currentPage]);
-
-  // Reset to page 1 when sort changes
-  const handleSortChange = (order: SortOrder) => {
-    setSortOrder(order);
-    setCurrentPage(1);
-  };
 
   return (
     <div className="space-y-4 sm:space-y-6">
