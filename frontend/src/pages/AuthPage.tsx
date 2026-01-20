@@ -8,7 +8,6 @@ import { z } from "zod";
 import { Footer } from "../components/Layout/Footer";
 import { Input } from "../components/ui/Input";
 import Stepper, { Step } from "../components/ui/Stepper";
-import GradientText from "../components/ui/GradientText";
 import { useAuth } from "../context/AuthContext";
 import { login, register as registerUser } from "../services/auth";
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
