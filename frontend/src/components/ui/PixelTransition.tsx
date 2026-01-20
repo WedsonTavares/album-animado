@@ -11,6 +11,7 @@ interface PixelTransitionProps {
   className?: string;
   style?: CSSProperties;
   aspectRatio?: string;
+  autoTrigger?: boolean;
 }
 
 const PixelTransition: React.FC<PixelTransitionProps> = ({
@@ -22,7 +23,8 @@ const PixelTransition: React.FC<PixelTransitionProps> = ({
   once = false,
   aspectRatio = '100%',
   className = '',
-  style = {}
+  style = {},
+  autoTrigger = false
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pixelGridRef = useRef<HTMLDivElement | null>(null);
@@ -57,6 +59,13 @@ const PixelTransition: React.FC<PixelTransitionProps> = ({
       }
     }
   }, [gridSize, pixelColor]);
+
+  // Auto-trigger animation when component mounts (for navigation)
+  useEffect(() => {
+    if (autoTrigger && !isActive) {
+      animatePixels(true);
+    }
+  }, [autoTrigger]);
 
   const animatePixels = (activate: boolean): void => {
     setIsActive(activate);
@@ -104,36 +113,39 @@ const PixelTransition: React.FC<PixelTransitionProps> = ({
   };
 
   const handleEnter = (): void => {
-    if (!isActive) animatePixels(true);
+    if (!isActive && !autoTrigger) animatePixels(true);
   };
   const handleLeave = (): void => {
-    if (isActive && !once) animatePixels(false);
+    if (isActive && !once && !autoTrigger) animatePixels(false);
   };
   const handleClick = (): void => {
-    if (!isActive) animatePixels(true);
-    else if (isActive && !once) animatePixels(false);
+    if (!autoTrigger) {
+      if (!isActive) animatePixels(true);
+      else if (isActive && !once) animatePixels(false);
+    }
   };
+
   return (
     <div
       ref={containerRef}
       className={`${className} relative overflow-hidden`}
       style={style}
-      onMouseEnter={!isTouchDevice ? handleEnter : undefined}
-      onMouseLeave={!isTouchDevice ? handleLeave : undefined}
-      onClick={isTouchDevice ? handleClick : undefined}
-      onFocus={!isTouchDevice ? handleEnter : undefined}
-      onBlur={!isTouchDevice ? handleLeave : undefined}
-      tabIndex={0}
+      onMouseEnter={!isTouchDevice && !autoTrigger ? handleEnter : undefined}
+      onMouseLeave={!isTouchDevice && !autoTrigger ? handleLeave : undefined}
+      onClick={isTouchDevice && !autoTrigger ? handleClick : undefined}
+      onFocus={!isTouchDevice && !autoTrigger ? handleEnter : undefined}
+      onBlur={!isTouchDevice && !autoTrigger ? handleLeave : undefined}
+      tabIndex={autoTrigger ? -1 : 0}
     >
-      <div style={{ paddingTop: aspectRatio }} />
+      {aspectRatio !== '0' && <div style={{ paddingTop: aspectRatio }} />}
 
-      <div className="absolute inset-0 w-full h-full" aria-hidden={isActive}>
+      <div className={`${aspectRatio !== '0' ? 'absolute inset-0' : 'relative'} w-full h-full`} aria-hidden={isActive}>
         {firstContent}
       </div>
 
       <div
         ref={activeRef}
-        className="absolute inset-0 w-full h-full z-[2]"
+        className={`${aspectRatio !== '0' ? 'absolute inset-0' : 'absolute inset-0'} w-full h-full z-[2]`}
         style={{ display: 'none' }}
         aria-hidden={!isActive}
       >
