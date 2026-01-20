@@ -15,7 +15,7 @@ export function SortSelect({ value, onChange, label = "Ordenar" }: Props) {
         <button
           type="button"
           onClick={() => onChange("asc")}
-          className={`p-2 rounded-lg transition-colors ${
+          className={`p-2 rounded-lg transition-colors cursor-pointer ${
             value === "asc"
               ? "text-primary bg-primary/10"
               : "text-muted-foreground hover:text-foreground hover:bg-card-hover"
@@ -27,7 +27,7 @@ export function SortSelect({ value, onChange, label = "Ordenar" }: Props) {
         <button
           type="button"
           onClick={() => onChange("desc")}
-          className={`p-2 rounded-lg transition-colors ${
+          className={`p-2 rounded-lg transition-colors cursor-pointer ${
             value === "desc"
               ? "text-primary bg-primary/10"
               : "text-muted-foreground hover:text-foreground hover:bg-card-hover"

@@ -10,7 +10,7 @@ export function ViewToggle({ value, onChange }: Props) {
   return (
     <div className="inline-flex gap-1">
       <button
-        className={`p-2.5 rounded-lg transition-colors ${value === "grid" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+        className={`p-2.5 rounded-lg transition-colors cursor-pointer ${value === "grid" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("grid")}
         type="button"
         title="Visualizar em grade"
@@ -18,7 +18,7 @@ export function ViewToggle({ value, onChange }: Props) {
         <LayoutGrid size={18} />
       </button>
       <button
-        className={`p-2.5 rounded-lg transition-colors ${value === "table" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+        className={`p-2.5 rounded-lg transition-colors cursor-pointer ${value === "table" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("table")}
         type="button"
         title="Visualizar em lista"

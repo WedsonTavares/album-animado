@@ -77,7 +77,7 @@ export function AppLayout() {
               <button
                 type="button"
                 onClick={() => setIsUserMenuOpen((open) => !open)}
-                className="flex items-center gap-2 sm:gap-3 rounded-xl px-2 py-1.5 text-left hover:bg-card/80 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+                className="flex items-center gap-2 sm:gap-3 rounded-xl px-2 py-1.5 text-left hover:bg-card/80 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors cursor-pointer"
               >
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary/10 flex items-center justify-center text-xs sm:text-sm font-semibold text-primary">
                   {getInitials(user.name, user.email)}

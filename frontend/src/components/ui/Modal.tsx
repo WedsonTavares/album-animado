@@ -32,7 +32,7 @@ export function Modal({ open, onClose, title, children, footer, size = 'default'
             <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border">
               <h3 className="text-base sm:text-lg font-semibold text-foreground">{title}</h3>
               <button
-                className="p-1.5 sm:p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-card-hover transition-colors"
+                className="p-1.5 sm:p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-card-hover transition-colors cursor-pointer"
                 onClick={onClose}
                 aria-label="Fechar"
               >
