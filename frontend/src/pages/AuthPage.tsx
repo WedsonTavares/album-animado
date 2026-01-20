@@ -120,15 +120,12 @@ export function AuthPage({ mode }: Props) {
           <div className="card glass p-6 sm:p-8">
             {/* Header */}
             <div className="text-center mb-5 sm:mb-6">
-              <Link to="/" className="inline-flex flex-col items-center gap-2 mb-4 sm:mb-5">
+              <Link to="/" className="inline-block mb-4 sm:mb-5">
                 <img
                   src="/logo.png"
                   alt="Dr. TIS"
-                  className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl"
+                  className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl mx-auto"
                 />
-                <GradientText className="text-xl sm:text-2xl font-bold">
-                  Dr. TIS
-                </GradientText>
               </Link>
               <h1 className="text-xl sm:text-2xl font-bold text-foreground">{heading}</h1>
             </div>

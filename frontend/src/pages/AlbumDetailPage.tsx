@@ -262,12 +262,12 @@ export function AlbumDetailPage() {
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-sm text-primary whitespace-nowrap w-fit">
             <Image size={16} />
             {photoCount} {photoCount === 1 ? "foto" : "fotos"}
           </span>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
             <StarBorder 
               as="button" 
               onClick={() => setShowShare(true)} 
@@ -290,7 +290,7 @@ export function AlbumDetailPage() {
             >
               <ImagePlus size={16} /> 
               <span className="hidden sm:inline">Adicionar fotos</span>
-              <span className="sm:hidden truncate">Adicionar</span>
+              <span className="sm:hidden truncate">Adicionar fotos</span>
             </button>
             {photoCount === 0 && (
               <button 
