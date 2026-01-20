@@ -66,7 +66,7 @@ export function PhotoPreview({ photo, onClose }: Props) {
                     <span className="truncate">{photo.predominant_color}</span>
                   </span>
                 ) : (
-                  "N/A"
+                  "Sem cor"
                 )}
               </span>
             </div>

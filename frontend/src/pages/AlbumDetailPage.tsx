@@ -254,54 +254,56 @@ export function AlbumDetailPage() {
       </Link>
 
       {/* Album Header */}
-      <div className="flex flex-col gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2">{album.title}</h1>
-          {album.description && (
-            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">{album.description}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-sm text-primary whitespace-nowrap w-fit">
-            <Image size={16} />
-            {photoCount} {photoCount === 1 ? "foto" : "fotos"}
-          </span>
-          <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
-            <StarBorder 
-              as="button" 
-              onClick={() => setShowShare(true)} 
-              className="p-2.5"
-              title={album.is_public ? "Compartilhado" : "Compartilhar"}
-            >
-              <Share2 size={18} />
-            </StarBorder>
-            <StarBorder 
-              as="button" 
-              onClick={() => setShowEdit(true)} 
-              className="p-2.5"
-              title="Editar álbum"
-            >
-              <Edit3 size={18} />
-            </StarBorder>
-            <button 
-              onClick={() => setShowUpload(true)} 
-              className="btn btn-primary text-sm px-4 py-2 flex-1 sm:flex-initial min-w-0"
-            >
-              <ImagePlus size={16} /> 
-              <span className="hidden sm:inline">Adicionar fotos</span>
-              <span className="sm:hidden truncate">Adicionar fotos</span>
-            </button>
-            {photoCount === 0 && (
-              <button 
-                onClick={handleDeleteAlbum} 
-                className="btn btn-danger text-sm px-4 py-2"
-              >
-                <Trash2 size={16} /> 
-                <span className="hidden sm:inline">Excluir</span>
-                <span className="sm:hidden">Excluir</span>
-              </button>
+      <div className="card space-y-4 sm:space-y-6">
+        <div className="flex flex-col gap-4">
+          <div>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-1">{album.title}</h1>
+            {album.description && (
+              <p className="text-sm sm:text-base text-muted-foreground">{album.description}</p>
             )}
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-sm text-primary whitespace-nowrap w-fit">
+              <Image size={16} />
+              {photoCount} {photoCount === 1 ? "foto" : "fotos"}
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <StarBorder 
+                as="button" 
+                onClick={() => setShowShare(true)} 
+                className="p-2.5"
+                title={album.is_public ? "Compartilhado" : "Compartilhar"}
+              >
+                <Share2 size={18} />
+              </StarBorder>
+              <StarBorder 
+                as="button" 
+                onClick={() => setShowEdit(true)} 
+                className="p-2.5"
+                title="Editar álbum"
+              >
+                <Edit3 size={18} />
+              </StarBorder>
+              <button 
+                onClick={() => setShowUpload(true)} 
+                className="btn btn-primary text-sm px-4 py-2 flex-1 sm:flex-initial min-w-0"
+              >
+                <ImagePlus size={16} /> 
+                <span className="hidden sm:inline">Adicionar fotos</span>
+                <span className="sm:hidden truncate">Adicionar fotos</span>
+              </button>
+              {photoCount === 0 && (
+                <button 
+                  onClick={handleDeleteAlbum} 
+                  className="btn btn-danger text-sm px-4 py-2"
+                >
+                  <Trash2 size={16} /> 
+                  <span className="hidden sm:inline">Excluir</span>
+                  <span className="sm:hidden">Excluir</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
