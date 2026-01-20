@@ -162,7 +162,13 @@ export function PublicAlbumPage() {
       </main>
 
       {/* Photo Preview */}
-      <PhotoPreview photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} />
+      <PhotoPreview 
+        photo={selectedPhoto} 
+        photos={album.photos ?? []}
+        currentIndex={selectedPhoto && album.photos ? album.photos.findIndex(p => p.id === selectedPhoto.id) : undefined}
+        onClose={() => setSelectedPhoto(null)}
+        onNavigate={(index) => setSelectedPhoto(album.photos?.[index] ?? null)}
+      />
     </div>
   );
 }
