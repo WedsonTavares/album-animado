@@ -72,22 +72,22 @@ export function PhotoPreview({ photo, photos, currentIndex, onClose, onNavigate 
       <div className="space-y-3 sm:space-y-4">
         {/* Image with Navigation */}
         <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-card-hover group">
-          {/* Container da imagem */}
-          <div className="relative w-full flex items-center justify-center">
+          {/* Container da imagem com altura fixa */}
+          <div className="relative w-full h-[50vh] sm:h-[60vh] flex items-center justify-center">
             {showTransition && previousPhoto ? (
               <PixelTransition
                 firstContent={
                   <img
                     src={assetUrl(previousPhoto.file_path)}
                     alt={previousPhoto.title}
-                    className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] object-contain"
+                    className="w-full h-full object-contain"
                   />
                 }
                 secondContent={
                   <img
                     src={assetUrl(photo.file_path)}
                     alt={photo.title}
-                    className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] object-contain"
+                    className="w-full h-full object-contain"
                   />
                 }
                 gridSize={20}
@@ -96,13 +96,13 @@ export function PhotoPreview({ photo, photos, currentIndex, onClose, onNavigate 
                 once={true}
                 autoTrigger={true}
                 aspectRatio="0"
-                className="w-full"
+                className="w-full h-full"
               />
             ) : (
               <img
                 src={assetUrl(photo.file_path)}
                 alt={photo.title}
-                className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] object-contain mx-auto"
+                className="w-full h-full object-contain"
               />
             )}
           </div>
