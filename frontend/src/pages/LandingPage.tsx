@@ -42,7 +42,7 @@ export function LandingPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            <Link to="/login" className="btn btn-primary text-sm sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 w-full sm:w-auto">
+            <Link to="/register" className="btn btn-primary text-sm sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 w-full sm:w-auto">
               Começar agora <ArrowRight size={18} />
             </Link>
           </div>
@@ -156,7 +156,7 @@ export function LandingPage() {
           <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
             Crie sua conta gratuitamente e comece a organizar suas memórias hoje.
           </p>
-          <Link to="/login" className="btn btn-primary text-base px-8 py-3">
+          <Link to="/register" className="btn btn-primary text-base px-8 py-3">
             Criar minha conta <ArrowRight size={18} />
           </Link>
         </div>
