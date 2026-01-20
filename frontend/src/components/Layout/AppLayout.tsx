@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -87,17 +87,43 @@ export function AppLayout() {
                 </span>
               </button>
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-xl shadow-lg shadow-black/10 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-xl shadow-lg shadow-black/10 overflow-hidden">
+                  {/* Perfil (desabilitado) */}
+                  <div className="border-b border-border/40">
+                    <div className="flex items-center gap-3 px-4 py-3 opacity-50 cursor-not-allowed">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        {getInitials(user.name, user.email)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {user.name || "Usuário"}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      disabled
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground opacity-50 cursor-not-allowed"
+                    >
+                      <User size={16} />
+                      <span>Meu perfil</span>
+                    </button>
+                  </div>
+                  
+                  {/* Logout */}
                   <button
                     type="button"
                     onClick={() => {
                       setIsUserMenuOpen(false);
                       handleLogout();
                     }}
-                    className="flex w-full items-center gap-2 px-4 py-3 text-sm text-destructive hover:bg-destructive/10 focus:outline-none focus:ring-2 focus:ring-destructive/30 transition-colors"
+                    className="flex w-full items-center gap-3 px-4 py-3 text-sm text-destructive hover:bg-destructive/10 focus:outline-none focus:ring-2 focus:ring-destructive/30 transition-colors"
                   >
                     <LogOut size={16} />
-                    <span>Sair</span>
+                    <span>Sair da conta</span>
                   </button>
                 </div>
               )}
