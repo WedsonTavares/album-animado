@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/Layout/AppLayout";
 
-// Lazy load pages for better performance
 const LandingPage = lazy(() =>
   import("./pages/LandingPage").then((m) => ({ default: m.LandingPage }))
 );
@@ -20,7 +19,6 @@ const PublicAlbumPage = lazy(() =>
   import("./pages/PublicAlbumPage").then((m) => ({ default: m.PublicAlbumPage }))
 );
 
-// Loading fallback component
 function PageLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
